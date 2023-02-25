@@ -13,7 +13,7 @@ CONTAINER_NAME="Thigh_Terminal" # This value can be changed.
 echo -ne "\033]0;$CONTAINER_NAME\007"
 
 # Set the image name
-IMAGE_NAME="THY_IMAGE:Latest" # This value can change depending on what you want to call your image. 
+IMAGE_NAME="thy_image:latest" # This value can change depending on what you want to call your image. 
 
 # Set the path to the Dockerfile
 DOCKERFILE_PATH="." # This value can be changed for whatever reason. (Defaults to Repo Dir)
@@ -46,7 +46,7 @@ else
     
     # Run the container
     clear
-    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -e TERM=xterm-256color -v $(PWD)/Shared_Folder:/root/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME 
+    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -e TERM=xterm-256color -v ./Shared_Folder:/root/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME 
     
     # This part can be edited to have Variable values, to allow greater customization. 
     # Note that --cap-add=NET_ADMIN is used to give the docker container more perms, port:port is used to bind docker ports to host ports.
