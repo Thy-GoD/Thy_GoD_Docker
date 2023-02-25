@@ -3,6 +3,7 @@ FROM docker.io/kalilinux/kali-rolling
 
 # Set default shell to ZSH and install dependencies
 ENV SHELL=/bin/zsh
+ENV TERM=xterm-256color
 RUN apt-get update && apt-get install -y \
     zsh \
     sudo \
@@ -25,8 +26,8 @@ RUN apt-get update && apt-get install -y \
     
 # Updates Everything (Will be done a second time)
     
-RUN sudo apt update && apt upgrade -y
-RUN apt autoremove
+RUN sudo apt-get update && apt-get upgrade -y
+RUN apt-get autoremove
     
 # Sets Up Login Message (This can be easily configured)
 
@@ -166,8 +167,8 @@ RUN apt-get update && apt-get install -y \
     
 # Does a final update of everything
     
-RUN sudo apt update && apt upgrade -y
-RUN apt autoremove
+RUN sudo apt-get update && apt-get upgrade -y
+RUN apt-get autoremove
 
 # Signifies Ports to be Used.
 
