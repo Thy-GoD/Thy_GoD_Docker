@@ -44,7 +44,10 @@ RUN echo ulimit -c 0 >> ~/.zshrc
     
 RUN updatedb
 
-# Add user "Thy_GoD" with sudo privileges
+# Add user "Thy_GoD" with sudo privileges 
+# This was done as I kept getting "X cannot be installed as root" errors.
+# You can delete this if you want, or find a way to circumvent it. 
+
 RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   
