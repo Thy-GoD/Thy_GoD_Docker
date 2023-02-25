@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     fonts-powerline \
     figlet \
+    lsof \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
