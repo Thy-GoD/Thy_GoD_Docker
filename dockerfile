@@ -34,6 +34,10 @@ RUN echo "#!/bin/bash" > ~/.login_text && \
     echo "figlet -ct Thigh Terminal" >> ~/.login_text && \
     echo "bash ~/.login_text" >> ~/.zshrc
 
+# Removes Core Dumps (Can comment out if you want them.)
+
+RUN echo ulimit -c 0 >> ~/.zshrc
+
 # Sets up Locate command.
     
 RUN updatedb
@@ -68,7 +72,14 @@ RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
     echo 'znap function _pyenv pyenv '\''eval "$( pyenv init - --no-rehash )"'\' >> ~/.zshrc && \
     echo 'compctl -K    _pyenv pyenv' >> ~/.zshrc
 
+# Configures the spaceship prompt (Can be Changed)
 
+RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
+    echo "SPACESHIP_HOST_PREFIX='💀'" >> ~/.spaceshiprc.zsh && \
+    echo "SPACESHIP_USER_SUFFIX=''" >> ~/.spaceshiprc.zsh && \
+    echo "SPACESHIP_USER_COLOR='red'" >> ~/.spaceshiprc.zsh && \
+    echo "SPACESHIP_DIR_TRUNC='0'" >> ~/.spaceshiprc.zsh && \
+    echo "SPACESHIP_PROMPT_ORDER=(time user host dir git hg package node ruby python elm elixir xcode swift golang php rust haskell java julia docker aws gcloud venv conda dotnet kubectl terraform ibmcloud exec_time async line_sep battery jobs exit_code char)" >> ~/.spaceshiprc.zsh 
 
 # Adds Custom Aliases
 
