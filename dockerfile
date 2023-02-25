@@ -72,8 +72,9 @@ RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
     echo '' >> ~/.zshrc && \
     echo '# `znap function` lets you lazy-load features you don'\''t always need.' >> ~/.zshrc && \
     echo 'znap function _pyenv pyenv '\''eval "$( pyenv init - --no-rehash )"'\' >> ~/.zshrc && \
-    echo 'compctl -K    _pyenv pyenv' >> ~/.zshrc
-
+    echo 'compctl -K    _pyenv pyenv' >> ~/.zshrc && \
+    echo "zstyle ':autocomplete:*' min-input 3" >> ~/.zshrc
+    
 # Configures the spaceship prompt (Can be Changed)
 
 RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
@@ -165,6 +166,7 @@ RUN apt-get update && apt-get install -y \
     hashid \
     man-db \
     && rm -rf /var/lib/apt/lists/*
+ 
     
 # Does a final update of everything
     
