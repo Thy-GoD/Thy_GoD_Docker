@@ -2,6 +2,7 @@ FROM docker.io/kalilinux/kali-rolling
 
 
 # Set default shell to ZSH and install dependencies
+
 ENV SHELL=/bin/zsh
 ENV TERM=xterm-256color
 RUN apt-get update && apt-get install -y \
@@ -44,13 +45,16 @@ RUN echo ulimit -c 0 >> ~/.zshrc
 # Add user "Thy_GoD" with sudo privileges 
 # This was done as I kept getting "X cannot be installed as root" errors.
 # You can delete this if you want, or find a way to circumvent it. 
+
 RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   
 # Add Shared_Folder for volume mounting    
+
 RUN mkdir /root/Shared_Folder
 
 # Install ZSH snap & Plugins into zsh_files
+
 RUN mkdir zsh_files/
 RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
     echo '[[ -f /root/zsh_files/Git/zsh-snap/znap.zsh ]] ||' >> ~/.zshrc && \
@@ -88,12 +92,14 @@ RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
 RUN echo "alias cls='clear && ls -a'" >> ~/.zshrc
 
 # Install neovim and bat
+
 RUN apt-get update && apt-get install -y \
     neovim \
     bat \
     && rm -rf /var/lib/apt/lists/*
     
 # Sets up symlink for bat    
+
 RUN mkdir -p ~/.local/bin && \
     ln -s /usr/bin/batcat ~/.local/bin/bat
 
@@ -103,28 +109,35 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="${PATH}:/root/.cargo/bin"
 
 # Rock you/Wordlists
+
 RUN mkdir /root/wordlists/
 RUN git clone https://github.com/danielmiessler/SecLists.git /root/wordlists/
 
 # Vulscan
+
 RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
 RUN mkdir /root/payloads
 
 # installs Payloads and puts it into Payloads folder.
+
 RUN git clone https://github.com/phoenix-journey/Payloads.git /tmp/Payloads \
     && mv /tmp/Payloads/* /root/payloads \
     && rm -rf /tmp/Payloads
 
 # Cargo Installations
+# Above installs Xh, Ouch, Atuin, then binds atuin to zshrc.
+
 RUN cargo install xh && \
     cargo install ouch && \
     cargo install atuin && \
+    cargo install cargo-update && \
     echo 'eval "$(atuin init zsh)"' >> /root/.zshrc
     
-# Above installs Xh, Ouch, Atuin, then binds atuin to zshrc.
 
-# Install desired tools and open/bind ports
+
+# Install Tools and Open Planned Ports
+
 RUN apt-get update && apt-get install -y \
     python3 \
     iputils-ping \
@@ -164,6 +177,7 @@ RUN apt-get update && apt-get install -y \
     exploitdb \
     hashid \
     man-db \
+    mitmproxy \
     && rm -rf /var/lib/apt/lists/*
  
     
@@ -173,7 +187,7 @@ RUN sudo apt-get update && apt-get upgrade -y
 RUN apt-get autoremove
 RUN updatedb
 
-# Signifies Ports to be Used.
+# Signifies Ports to be Used. (8080 for MITMProxy)
 
 EXPOSE 8888
 EXPOSE 6969
