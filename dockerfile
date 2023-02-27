@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     fonts-powerline \
     figlet \
     lsof \
+    hurl \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -39,10 +40,6 @@ RUN echo "#!/bin/bash" > ~/.login_text && \
 # Removes Core Dumps (Can comment out if you want them.)
 
 RUN echo ulimit -c 0 >> ~/.zshrc
-
-# Sets up Locate command.
-    
-RUN updatedb
 
 # Add user "Thy_GoD" with sudo privileges
 RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
@@ -172,6 +169,7 @@ RUN apt-get update && apt-get install -y \
     
 RUN sudo apt-get update && apt-get upgrade -y
 RUN apt-get autoremove
+RUN updatedb
 
 # Signifies Ports to be Used.
 
