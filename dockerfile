@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-venv \
     python3-pip \
+    pipx \
     mlocate \
     openssh-client \
     pkg-config \
