@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     figlet \
     lsof \
     hurl \
+    seclists \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -44,8 +45,8 @@ RUN echo "#!/bin/bash" > ~/.login_text && \
 RUN echo ulimit -c 0 >> ~/.zshrc
 
 # Add user "Thy_GoD" with sudo privileges 
-# This was done as I kept getting "X cannot be installed as root" errors.
-# You can delete this if you want, or find a way to circumvent it. 
+# This was done mainly for fun,
+# If you need a "work" folder and "home" folder.
 
 RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -109,10 +110,12 @@ RUN mkdir -p ~/.local/bin && \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="${PATH}:/root/.cargo/bin"
 
-# Rock you/Wordlists
+# Wordlists
+# Seclists will be the main wordlist, but you can add more here.
+# Or, you can move/install seclists into here.
+# Btw, use the command "seclists" to automatically move to the seclists dir.
 
 RUN mkdir /root/wordlists/
-RUN git clone https://github.com/danielmiessler/SecLists.git /root/wordlists/
 
 # Vulscan
 
@@ -120,11 +123,10 @@ RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
 RUN mkdir /root/payloads
 
-# installs Payloads and puts it into Payloads folder.
+# Installs Payloads into payloads folder.
 
-RUN git clone https://github.com/phoenix-journey/Payloads.git /tmp/Payloads \
-    && mv /tmp/Payloads/* /root/payloads \
-    && rm -rf /tmp/Payloads
+RUN mkdir /root/payloads/
+RUN git clone https://github.com/phoenix-journey/Payloads.git /root/payloads/
 
 # Cargo Installations
 # Above installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
@@ -199,6 +201,8 @@ EXPOSE 9090
 EXPOSE 8585
 
 # Set up additional configurations as needed
+# I recommend package managers if you need them like npm or brew,
+# It's a matter of preference, plus you can add and remove stuff as you wish.
 # ...
 
 # Start as root
