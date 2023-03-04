@@ -127,12 +127,13 @@ RUN git clone https://github.com/phoenix-journey/Payloads.git /tmp/Payloads \
     && rm -rf /tmp/Payloads
 
 # Cargo Installations
-# Above installs Xh, Ouch, Atuin, then binds atuin to zshrc.
+# Above installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
 
 RUN cargo install xh && \
     cargo install ouch && \
     cargo install atuin && \
     cargo install cargo-update && \
+    cargo install --features=ssl websocat && \
     echo 'eval "$(atuin init zsh)"' >> /root/.zshrc
     
 
