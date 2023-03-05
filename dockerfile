@@ -1,6 +1,5 @@
 FROM docker.io/kalilinux/kali-rolling
 
-
 # Set default shell to ZSH and install dependencies
 
 ENV SHELL=/bin/zsh
