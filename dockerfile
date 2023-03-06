@@ -114,13 +114,11 @@ ENV PATH="${PATH}:/root/.cargo/bin"
 # Or, you can move/install seclists into here.
 # Btw, use the command "seclists" to automatically move to the seclists dir.
 
-RUN mkdir /root/wordlists/
+RUN mkdir /root/wordlists
 
 # Vulscan
 
 RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
-
-RUN mkdir /root/payloads
 
 # Installs Payloads into payloads folder.
 
@@ -128,7 +126,7 @@ RUN mkdir /root/payloads/
 RUN git clone https://github.com/phoenix-journey/Payloads.git /root/payloads/
 
 # Cargo Installations
-# Above installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
+# Installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
 
 RUN cargo install xh && \
     cargo install ouch && \
@@ -137,7 +135,6 @@ RUN cargo install xh && \
     cargo install --features=ssl websocat && \
     echo 'eval "$(atuin init zsh)"' >> /root/.zshrc
     
-
 
 # Install Tools and Open Planned Ports
 
@@ -187,7 +184,7 @@ RUN apt-get update && apt-get install -y \
 # Does a final update of everything
     
 RUN sudo apt-get update && apt-get upgrade -y
-RUN apt-get autoremove
+RUN sudo apt-get autoremove
 RUN updatedb
 
 # Signifies Ports to be Used. (8080 for MITMProxy)
