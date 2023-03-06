@@ -179,13 +179,16 @@ RUN apt-get update && apt-get install -y \
     man-db \
     mitmproxy \
     && rm -rf /var/lib/apt/lists/*
- 
     
 # Does a final update of everything
     
-RUN sudo apt-get update && apt-get upgrade -y
-RUN sudo apt-get autoremove
-RUN updatedb
+RUN sudo apt-get update && apt-get upgrade -y && \
+    sudo apt-get autoremove && \
+    echo 'sudo ifconfig eth0 mtu' >> ~/.zshrc && \ 
+    updatedb
+
+# The ifconfig modification is used to fix a SSH bug. 
+# (Setting MTU to a lower value solve SSH issues)
 
 # Signifies Ports to be Used. (8080 for MITMProxy)
 
