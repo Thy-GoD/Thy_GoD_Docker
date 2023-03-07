@@ -90,7 +90,7 @@ RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
 
 # Adds Custom Aliases
 
-RUN echo "alias cls='clear && ls -a'" >> ~/.zshrc
+RUN echo "alias cls='clear && ls -l'" >> ~/.zshrc
 
 # Install neovim and bat
 
@@ -183,12 +183,8 @@ RUN apt-get update && apt-get install -y \
 # Does a final update of everything
     
 RUN sudo apt-get update && apt-get upgrade -y && \
-    sudo apt-get autoremove && \
-    echo 'sudo ifconfig eth0 mtu' >> ~/.zshrc && \ 
+    sudo apt-get autoremove && \ 
     updatedb
-
-# The ifconfig modification is used to fix a SSH bug. 
-# (Setting MTU to a lower value solve SSH issues)
 
 # Signifies Ports to be Used. (8080 for MITMProxy)
 
