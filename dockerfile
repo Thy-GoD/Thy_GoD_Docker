@@ -184,6 +184,7 @@ RUN apt-get update && apt-get install -y \
     
 RUN sudo apt-get update && apt-get upgrade -y && \
     sudo apt-get autoremove && \ 
+    echo "MACs hmac-sha1" >> /etc/ssh/ssh_config && \
     updatedb
 
 # Signifies Ports to be Used. (8080 for MITMProxy)
