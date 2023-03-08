@@ -35,7 +35,8 @@ RUN apt-get autoremove
     
 # Sets Up Login Message (This can be easily configured)
 
-RUN echo "#!/bin/bash" > ~/.login_text && \
+RUN echo "#First Section of Custom Commands" && \
+    echo "#!/bin/bash" > ~/.login_text && \
     echo "figlet -ct Thigh Terminal" >> ~/.login_text && \
     echo "bash ~/.login_text" >> ~/.zshrc
 
@@ -87,7 +88,7 @@ RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
     echo "SPACESHIP_USER_COLOR='red'" >> ~/.spaceshiprc.zsh && \
     echo "SPACESHIP_DIR_TRUNC='0'" >> ~/.spaceshiprc.zsh && \
     echo "SPACESHIP_PROMPT_ORDER=(time user host dir git hg package node ruby python elm elixir xcode swift golang php rust haskell java julia docker aws gcloud venv conda dotnet kubectl terraform ibmcloud exec_time async line_sep battery jobs exit_code char)" >> ~/.spaceshiprc.zsh 
-
+    
 # Adds Custom Aliases
 
 RUN echo "alias cls='clear && ls -l'" >> ~/.zshrc
@@ -148,7 +149,6 @@ RUN apt-get update && apt-get install -y \
     perl \
     git \
     feroxbuster \
-    gobuster \
     tcpdump \
     nmap \
     smbmap \
@@ -178,14 +178,16 @@ RUN apt-get update && apt-get install -y \
     hashid \
     man-db \
     mitmproxy \
+    ffuf \
     && rm -rf /var/lib/apt/lists/*
     
 # Does a final update of everything
+# Includes SSH fix and automatic locatedb update.
     
 RUN sudo apt-get update && apt-get upgrade -y && \
     sudo apt-get autoremove && \ 
     echo "MACs hmac-sha1" >> /etc/ssh/ssh_config && \
-    updatedb
+    echo "updatedb" >> ~/.zshrc
 
 # Signifies Ports to be Used. (8080 for MITMProxy)
 
@@ -200,6 +202,9 @@ EXPOSE 8585
 # I recommend package managers if you need them like npm or brew,
 # It's a matter of preference, plus you can add and remove stuff as you wish.
 # ...
+# RUN sudo apt-get install gobuster
+# Gobuster was removed as I found ffuf to be better, you can revert these changes. 
+
 
 # Start as root
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
