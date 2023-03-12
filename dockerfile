@@ -124,7 +124,7 @@ RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 # Installs Payloads into payloads folder.
 
 RUN mkdir /root/payloads/
-RUN git clone https://github.com/phoenix-journey/Payloads.git /root/payloads/
+RUN git clone https://github.com/phoenix-journey/Payloads.git /root/payloads/Payloads
 
 # Cargo Installations
 # Installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
