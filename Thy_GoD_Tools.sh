@@ -5,6 +5,10 @@
 # using Chat GPT for initial code/debugging 
 # and Nutek-Terminal/Nutek-Shell for Code Snippets/Inspiration.
 
+# Function to stop container when exited. (fresh reset with data intact)
+stop_container() {
+    docker stop $CONTAINER_NAME > /dev/null 2>&1
+}
 
 # Set the container name
 CONTAINER_NAME="Thigh_Terminal" # This value can be changed. 
@@ -30,18 +34,19 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo "Initiating Running Container....."
     echo ""
     # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME env TERM=xterm-256color /bin/zsh
+    docker exec -it $CONTAINER_NAME /usr/bin/zsh
+
     
 # Check if the container exists and is stopped.
 elif [ "$(docker ps -a -f name=$CONTAINER_NAME | grep $CONTAINER_NAME | grep Exited)" ]; then
-    docker start $CONTAINER_NAME
+    docker start -i $CONTAINER_NAME
     clear
     # Sets Terminal Title (Can be Changed)
     echo -ne "\033]0;$CONTAINER_NAME\007"
     echo "Started Stopped Container....." 
     echo ""
     # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME env TERM=xterm-256color /bin/zsh
+    docker exec -it $CONTAINER_NAME /usr/bin/zsh
     
 # Else, Build the Image using a Docker File.
 else
@@ -58,6 +63,10 @@ else
     # I can add plans to allow ports to be manually configurable, but honestly you can just change them here to make them permament changes.
     # Instead of needing to specify them each time.
     # Well technically I can make them permanent but o well.
+    # FYI you can add '--rm' to remove the container and all of it's contents once you exit it.
 fi
+
+# Binds the 'exit' command to the stop_container function
+trap stop_container EXIT
 
 # Made with thanks from Nutek-Terminal for the inspiration/code, Chat GPT for starting code/debugging and Google. 

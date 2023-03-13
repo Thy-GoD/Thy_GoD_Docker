@@ -50,6 +50,9 @@ RUN echo ulimit -c 0 >> ~/.zshrc
 
 RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    
+RUN mkdir /home/Thy_GoD/Vanguard_Worship_Alter && \
+    echo 'Vanguard (Azur Lane) My Beloved.' >> /home/Thy_GoD/Vanguard_Worship_Alter/offering.txt
   
 # Add Shared_Folder for volume mounting    
 
@@ -210,6 +213,5 @@ EXPOSE 8585
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
-CMD ["/bin/zsh"]
 
 # Made By Thigh GoD with the help of Chat GPT and Googling.
