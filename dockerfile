@@ -32,17 +32,35 @@ RUN apt-get update && apt-get install -y \
     
 RUN sudo apt-get update && apt-get upgrade -y
 RUN apt-get autoremove
+
+# Sets up Oh-My-ZSH
+# Plugins included are autocomplete, syntax highlight and atuin (installed later).
+# This script automatically installs and runs my personal Prompt, you may change if you wish.
+
+RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -) --unattended" && \
+    echo "#Customized Settings, use the template if you need to change." > ~/.zshrc && \
+    echo "export ZSH=$HOME/.oh-my-zsh" >> ~/.zshrc && \
+    echo "ZSH_THEME='ThyGoD'" >> ~/.zshrc && \
+    echo "zstyle ':omz:update' mode auto   # update automatically without asking" >> ~/.zshrc && \
+    echo "zstyle ':omz:update' frequency 7 # update every week" >> ~/.zshrc && \
+    echo "zstyle ':autocomplete:*' min-input 3" >> ~/.zshrc && \
+    echo "plugins=(git-prompt zsh-syntax-highlighting zsh-autocomplete)" >> ~/.zshrc && \
+    echo "source $HOME/.oh-my-zsh/oh-my-zsh.sh" >> ~/.zshrc && \
+    git clone https://github.com/Thy-GoD/thy-god-zsh-theme.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/Thy-GoD && \
+    cp ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/Thy-GoD/ThyGoD.zsh-theme ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/ && \
+    git clone https://github.com/marlonrichert/zsh-autocomplete ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
+
     
 # Sets Up Login Message (This can be easily configured)
 
-RUN echo "#First Section of Custom Commands" && \
-    echo "#!/bin/bash" > ~/.login_text && \
+RUN echo "#\!/bin/bash" > ~/.login_text && \
     echo "figlet -ct Thigh Terminal" >> ~/.login_text && \
     echo "bash ~/.login_text" >> ~/.zshrc
 
 # Removes Core Dumps (Can comment out if you want them.)
 
-RUN echo ulimit -c 0 >> ~/.zshrc
+RUN echo "ulimit -c 0" >> ~/.zshrc
 
 # Add user "Thy_GoD" with sudo privileges 
 # This was done mainly for fun,
@@ -59,38 +77,40 @@ RUN mkdir /home/Thy_GoD/Vanguard_Worship_Alter && \
 RUN mkdir /root/Shared_Folder
 
 # Install ZSH snap & Plugins into zsh_files
+# znap has been removed as I switched to Oh-My-Zsh
 
-RUN mkdir zsh_files/
-RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
-    echo '[[ -f /root/zsh_files/Git/zsh-snap/znap.zsh ]] ||' >> ~/.zshrc && \
-    echo '    git clone --depth 1 -- \' >> ~/.zshrc && \
-    echo '        https://github.com/marlonrichert/zsh-snap.git /root/zsh_files/Git/zsh-snap' >> ~/.zshrc && \
-    echo '' >> ~/.zshrc && \
-    echo 'source /root/zsh_files/Git/zsh-snap/znap.zsh  # Start Znap' >> ~/.zshrc && \
-    echo '' >> ~/.zshrc && \
-    echo '# `znap prompt` makes your prompt visible in just 15-40ms!' >> ~/.zshrc && \
-    echo 'znap prompt spaceship-prompt/spaceship-prompt' >> ~/.zshrc && \
-    echo '' >> ~/.zshrc && \
-    echo '# `znap source` automatically downloads and starts your plugins.' >> ~/.zshrc && \
-    echo 'znap source marlonrichert/zsh-autocomplete' >> ~/.zshrc && \
-    echo 'znap source zsh-users/zsh-syntax-highlighting' >> ~/.zshrc && \
-    echo '' >> ~/.zshrc && \
-    echo '# `znap eval` caches and runs any kind of command output for you.' >> ~/.zshrc && \
-    echo 'znap eval iterm2 '\''curl -fsSL https://iterm2.com/shell_integration/zsh'\''' >> ~/.zshrc && \
-    echo '' >> ~/.zshrc && \
-    echo '# `znap function` lets you lazy-load features you don'\''t always need.' >> ~/.zshrc && \
-    echo 'znap function _pyenv pyenv '\''eval "$( pyenv init - --no-rehash )"'\' >> ~/.zshrc && \
-    echo 'compctl -K    _pyenv pyenv' >> ~/.zshrc && \
-    echo "zstyle ':autocomplete:*' min-input 3" >> ~/.zshrc
+#RUN mkdir /root/zsh_files
+#RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
+#    echo '[[ -f /root/zsh_files/Git/zsh-snap/znap.zsh ]] ||' >> ~/.zshrc && \
+#    echo '    git clone --depth 1 -- \' >> ~/.zshrc && \
+#    echo '        https://github.com/marlonrichert/zsh-snap.git /root/zsh_files/Git/zsh-snap' >> ~/.zshrc && \
+#    echo '' >> ~/.zshrc && \
+#    echo 'source /root/zsh_files/Git/zsh-snap/znap.zsh  # Start Znap' >> ~/.zshrc && \
+#    echo '' >> ~/.zshrc && \
+#    echo '# `znap prompt` makes your prompt visible in just 15-40ms!' >> ~/.zshrc && \
+#    echo 'znap prompt spaceship-prompt/spaceship-prompt' >> ~/.zshrc && \
+#    echo '' >> ~/.zshrc && \
+#    echo '# `znap source` automatically downloads and starts your plugins.' >> ~/.zshrc && \
+#    echo 'znap source marlonrichert/zsh-autocomplete' >> ~/.zshrc && \
+#    echo 'znap source zsh-users/zsh-syntax-highlighting' >> ~/.zshrc && \
+#    echo '' >> ~/.zshrc && \
+#    echo '# `znap eval` caches and runs any kind of command output for you.' >> ~/.zshrc && \
+#    echo 'znap eval iterm2 '\''curl -fsSL https://iterm2.com/shell_integration/zsh'\''' >> ~/.zshrc && \
+#    echo '' >> ~/.zshrc && \
+#    echo '# `znap function` lets you lazy-load features you don'\''t always need.' >> ~/.zshrc && \
+#    echo 'znap function _pyenv pyenv '\''eval "$( pyenv init - --no-rehash )"'\' >> ~/.zshrc && \
+#    echo 'compctl -K    _pyenv pyenv' >> ~/.zshrc && \
+#    echo "zstyle ':autocomplete:*' min-input 3" >> ~/.zshrc
     
 # Configures the spaceship prompt (Can be Changed)
+# Spaceship prompt has been archived, I made my own ZSH theme. 
 
-RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
-    echo "SPACESHIP_HOST_PREFIX='💀'" >> ~/.spaceshiprc.zsh && \
-    echo "SPACESHIP_USER_SUFFIX=''" >> ~/.spaceshiprc.zsh && \
-    echo "SPACESHIP_USER_COLOR='red'" >> ~/.spaceshiprc.zsh && \
-    echo "SPACESHIP_DIR_TRUNC='0'" >> ~/.spaceshiprc.zsh && \
-    echo "SPACESHIP_PROMPT_ORDER=(time user host dir git hg package node ruby python elm elixir xcode swift golang php rust haskell java julia docker aws gcloud venv conda dotnet kubectl terraform ibmcloud exec_time async line_sep battery jobs exit_code char)" >> ~/.spaceshiprc.zsh 
+#RUN echo "SPACESHIP_HOST_SHOW='always'" > ~/.spaceshiprc.zsh && \
+#    echo "SPACESHIP_HOST_PREFIX='💀'" >> ~/.spaceshiprc.zsh && \
+#    echo "SPACESHIP_USER_SUFFIX=''" >> ~/.spaceshiprc.zsh && \
+#    echo "SPACESHIP_USER_COLOR='red'" >> ~/.spaceshiprc.zsh && \
+#    echo "SPACESHIP_DIR_TRUNC='0'" >> ~/.spaceshiprc.zsh && \
+#    echo "SPACESHIP_PROMPT_ORDER=(time user host dir git hg package node ruby python elm elixir xcode swift golang php rust haskell java julia docker aws gcloud venv conda dotnet kubectl terraform ibmcloud exec_time async line_sep battery jobs exit_code char)" >> ~/.spaceshiprc.zsh 
     
 # Adds Custom Aliases
 
