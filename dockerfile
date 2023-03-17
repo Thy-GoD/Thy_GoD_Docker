@@ -70,16 +70,19 @@ RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
     
 RUN mkdir /home/Thy_GoD/Vanguard_Worship_Alter && \
-    echo 'Vanguard (Azur Lane) My Beloved.' >> /home/Thy_GoD/Vanguard_Worship_Alter/offering.txt
+    echo 'Vanguard (Azur Lane) My Beloved.' >> /home/Thy_GoD/Vanguard_Worship_Alter/offering.txt && \
+    echo "Add the below line to ~/.login_text" >> /home/Thy_GoD/Vanguard_Worship_Alter/vanguard_greeting.txt && \
+    echo "figlet -ct Vanguard My Beloved" >> /home/Thy_GoD/Vanguard_Worship_Alter/vanguard_greeting.txt
+    
   
 # Add Shared_Folder for volume mounting    
 
-RUN mkdir /root/Shared_Folder
+RUN mkdir ~/Shared_Folder
 
 # Install ZSH snap & Plugins into zsh_files
 # znap has been removed as I switched to Oh-My-Zsh
 
-#RUN mkdir /root/zsh_files
+#RUN mkdir ~/zsh_files
 #RUN echo '# Download Znap, if it'\''s not there yet.' >> ~/.zshrc && \
 #    echo '[[ -f /root/zsh_files/Git/zsh-snap/znap.zsh ]] ||' >> ~/.zshrc && \
 #    echo '    git clone --depth 1 -- \' >> ~/.zshrc && \
@@ -157,7 +160,7 @@ RUN cargo install xh && \
     cargo install atuin && \
     cargo install cargo-update && \
     cargo install --features=ssl websocat && \
-    echo 'eval "$(atuin init zsh)"' >> /root/.zshrc
+    echo 'eval "$(atuin init zsh)"' >> ~/.zshrc
     
 
 # Install Tools and Open Planned Ports
