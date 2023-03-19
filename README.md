@@ -10,7 +10,7 @@ Feel free to use this to make your own docker projects or whatever.
 
 ## How to use:
 
-I've made it quite easy, simply run the tools.sh file, **(preferably as root to avoid any conflicts)**.
+I've made it quite easy, simply run the tools.sh file, **(as root if any conflicts occur somehow.)**.
 
 This obviously requires docker installed.
 
