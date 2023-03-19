@@ -26,4 +26,4 @@ Container has not been tested with tmux, but Konsole's split view instead.
 
 I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
 
-Btw, ports **8888,6969,8889,8080,9090** and **8585** are binded/used by default.
+Btw, ports **443,80,8888,6969,8889,8080,9090** and **8585** are binded/used by default.
