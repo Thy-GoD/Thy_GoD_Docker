@@ -274,5 +274,6 @@ EXPOSE 8585
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
+CMD ['/bin/zsh']
 
 # Made By Thigh GoD with the help of Chat GPT and Googling.
