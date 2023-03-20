@@ -1,4 +1,4 @@
-FROM docker.io/kalilinux/kali-rolling
+FROM kalilinux/kali-rolling
 
 # Set default shell to ZSH and install dependencies
 
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
 # Updates Everything (Will be done a second time)
     
 RUN sudo apt-get update && apt-get upgrade -y
-RUN apt-get autoremove
+RUN sudo apt-get autoremove
 
 # Sets Up Login Message (This can be easily configured)
 
@@ -41,7 +41,7 @@ RUN echo "\n#\!/bin/bash" > ~/.login_text && \
     
 # Sets up PATH variables:
 
-run echo 'export PATH="${PATH}:~/.cargo/bin"' >> ~/.zshrc && \
+run echo 'export PATH="${PATH}:${HOME}/.cargo/bin"' >> ~/.zshrc && \
     echo 'export PATH="/home/Thy_GoD/.local/bin:${PATH}"\n' >> ~/.zshrc
     
 # Removes Core Dumps (Can comment out if you want them.)
@@ -186,8 +186,8 @@ RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
 # Installs Payloads into payloads folder.
 
-RUN mkdir /root/payloads/
-RUN git clone https://github.com/phoenix-journey/Payloads.git /root/payloads/Payloads
+RUN mkdir ~/payloads/
+RUN git clone https://github.com/phoenix-journey/Payloads.git ~/payloads/Payloads
 
 # Cargo Installations
 # Installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
@@ -269,11 +269,12 @@ EXPOSE 8585
 # RUN sudo apt-get install gobuster
 # Gobuster was removed as I found ffuf to be better, you can revert these changes. 
 
+RUN zsh
 
 # Start as root
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
-CMD ['/bin/zsh']
+CMD ["/bin/zsh"]
 
 # Made By Thigh GoD with the help of Chat GPT and Googling.
