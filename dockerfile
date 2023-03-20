@@ -269,12 +269,10 @@ EXPOSE 8585
 # RUN sudo apt-get install gobuster
 # Gobuster was removed as I found ffuf to be better, you can revert these changes. 
 
-RUN zsh
-
 # Start as root
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
-CMD ["/bin/zsh"]
+CMD zsh
 
 # Made By Thigh GoD with the help of Chat GPT and Googling.
