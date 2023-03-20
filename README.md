@@ -10,7 +10,7 @@ Feel free to use this to make your own docker projects or whatever.
 
 ## How to use:
 
-I've made it quite easy, simply run the tools.sh file, **(preferably as root to avoid any conflicts)**.
+I've made it quite easy, simply run the tools.sh file, **(as root if any conflicts occur somehow.)**.
 
 This obviously requires docker installed.
 
@@ -26,4 +26,4 @@ Container has not been tested with tmux, but Konsole's split view instead.
 
 I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
 
-Btw, ports **8888,6969,8889,8080,9090** and **8585** are binded/used by default.
+Btw, ports **443,80,8888,6969,8889,8080,9090** and **8585** are binded/used by default.
