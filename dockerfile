@@ -173,12 +173,17 @@ RUN mkdir -p ~/.local/bin && \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="${PATH}:/root/.cargo/bin"
 
-# Wordlists
+# Wordlists & Tools/Scripts
 # Seclists will be the main wordlist, but you can add more here.
 # Or, you can move/install seclists into here.
 # Btw, use the command "seclists" to automatically move to the seclists dir.
 
+# Update: Added directory for tools/scripts.
+# This is to give github tools/scripts or POCs a special folder to live in <3.
+
 RUN mkdir /root/wordlists
+RUN mkdir /root/tools
+
 
 # Vulscan
 
@@ -241,6 +246,7 @@ RUN apt-get update && apt-get install -y \
     man-db \
     mitmproxy \
     ffuf \
+    crunch \
     && rm -rf /var/lib/apt/lists/*
     
 # Does a final update of everything
