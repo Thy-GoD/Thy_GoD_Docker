@@ -20,7 +20,9 @@ You can make this container as a *terminal* by creating a shortcut that runs the
 
 tools.sh automatically starts the container, enters a running container, and stops the docker container when the "exit" command is used.
 
-Container has not been tested with tmux, but Konsole's split view instead. 
+Container has not been tested with tmux, but Konsole's split view instead.
+
+Update: Tested tmux and it should work fine, I will add it's installation to be by default.
 
 ## Note: 
 

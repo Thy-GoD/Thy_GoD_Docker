@@ -247,6 +247,7 @@ RUN apt-get update && apt-get install -y \
     mitmproxy \
     ffuf \
     crunch \
+    tmux \
     && rm -rf /var/lib/apt/lists/*
     
 # Does a final update of everything
