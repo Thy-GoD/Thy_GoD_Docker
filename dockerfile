@@ -181,9 +181,13 @@ ENV PATH="${PATH}:/root/.cargo/bin"
 # Update: Added directory for tools/scripts.
 # This is to give github tools/scripts or POCs a special folder to live in <3.
 
-RUN mkdir /root/wordlists
-RUN mkdir /root/tools
+RUN mkdir ~/wordlists
+RUN mkdir ~/tools
 
+# Adds PSpy as an example tool.
+
+RUN wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 -O ~/tools/pspy64 && \
+    chmod 777 ~/tools/pspy64 # Change this if you wish to use different perm values.
 
 # Vulscan
 
@@ -258,7 +262,7 @@ RUN sudo apt-get update && apt-get upgrade -y && \
     echo "MACs hmac-sha1" >> /etc/ssh/ssh_config && \
     echo "updatedb" >> ~/.zshrc
 
-# Signifies Ports to be Used. (8080 for MITMProxy, 443 for HTTPS, 80 for HTTP)
+# Signifies Ports to be Used. (80 for HTTP, 443 for HTTPS, 8080 for MITMProxy)
 
 EXPOSE 80
 EXPOSE 443
