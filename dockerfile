@@ -171,7 +171,7 @@ RUN mkdir -p ~/.local/bin && \
 # Starts setting up rust and crates.io
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="${PATH}:/root/.cargo/bin"
+ENV PATH="${PATH}:~/.cargo/bin"
 
 # Wordlists & Tools/Scripts
 # Seclists will be the main wordlist, but you can add more here.
@@ -254,6 +254,7 @@ RUN apt-get update && apt-get install -y \
     ffuf \
     crunch \
     tmux \
+    ftp \
     && rm -rf /var/lib/apt/lists/*
     
 # Does a final update of everything
@@ -288,7 +289,7 @@ EXPOSE 9090
 # RUN sudo apt-get install gobuster
 # Gobuster was removed as I found ffuf to be better, you can revert these changes. 
 
-# Start as root
+# Start as root (Can be changed)
 ENV PATH=/home/Thy_GoD/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
