@@ -207,6 +207,10 @@ RUN cargo install xh && \
     cargo install cargo-update && \
     cargo install --features=ssl websocat && \
     echo 'eval "$(atuin init zsh)"' >> ~/.zshrc
+
+# Installs Python tools with pipx:
+
+RUN pipx install impacket
     
 # Install Tools and Open Planned Ports
 
@@ -241,9 +245,7 @@ RUN apt-get update && apt-get install -y \
     w3m \
     jq \
     libncurses5-dev \
-    libncursesw5-dev \
-    libssl-dev \
-    libffi-dev \
+    libncursesw5-dev \\
     perl \
     exploitdb \
     hashid \
@@ -262,16 +264,22 @@ RUN sudo apt-get update && apt-get upgrade -y && \
     echo "MACs hmac-sha1" >> /etc/ssh/ssh_config && \
     echo "updatedb" >> ~/.zshrc
 
-# Signifies Ports to be Used. (80 for HTTP, 443 for HTTPS, 8080 for MITMProxy)
+# Signifies Ports to be Used. 
+# (21 for ftp, 22 for SSH, 80 for HTTP, 443 for HTTPS, 445 for SMB, 8080 for MITMProxy)
+# Rest are extras for MISC usages. 
 
+EXPOSE 21
+EXPOSE 22
 EXPOSE 80
 EXPOSE 443
-EXPOSE 8888
+EXPOSE 445
 EXPOSE 6969
-EXPOSE 8889
+EXPOSE 8081
 EXPOSE 8080
-EXPOSE 9090
 EXPOSE 8585
+EXPOSE 8888
+EXPOSE 8889
+EXPOSE 9090
 
 # Set up additional configurations as needed
 # I recommend package managers if you need them like npm or brew,
