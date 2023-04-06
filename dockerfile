@@ -4,6 +4,11 @@ FROM kalilinux/kali-rolling
 
 ENV SHELL=/bin/zsh
 ENV TERM=xterm-256color
+
+# Optional User stuff for fun, see below.
+
+ENV USER_ALT=Thy_GoD
+
 RUN apt-get update && apt-get install -y \
     zsh \
     sudo \
@@ -26,6 +31,8 @@ RUN apt-get update && apt-get install -y \
     lsof \
     hurl \
     seclists \
+    jp2a \
+    lolcat \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -33,16 +40,19 @@ RUN apt-get update && apt-get install -y \
 RUN sudo apt-get update && apt-get upgrade -y
 RUN sudo apt-get autoremove
 
-# Sets Up Login Message (This can be easily configured)
-
-RUN echo "\n#\!/bin/bash" > ~/.login_text && \
-    echo "figlet -ct Thigh Terminal" >> ~/.login_text && \
-    echo "bash ~/.login_text\n" >> ~/.zshrc
-    
 # Sets up PATH variables:
 
 run echo 'export PATH="${PATH}:${HOME}/.cargo/bin"' >> ~/.zshrc && \
-    echo 'export PATH="/home/Thy_GoD/.local/bin:${PATH}"\n' >> ~/.zshrc
+    echo 'export PATH="/home/$USER_ALT/.local/bin:${PATH}"' >> ~/.zshrc
+    echo 'export PATH="/usr/games:${PATH}"\n' >> ~/.zshrc
+
+# Sets Up Login Message (This can be easily configured)
+# Hush login to remove default login warning.
+
+RUN echo "\n#\!/bin/bash" > ~/.login_text && \
+    echo "figlet -ct Thigh Terminal | lolcat" >> ~/.login_text && \
+    echo "bash ~/.login_text\n" >> ~/.zshrc
+    touch ~/.hushlogin 
     
 # Removes Core Dumps (Can comment out if you want them.)
 
@@ -140,14 +150,37 @@ RUN \
 # If you wish to change the username, please change the PATH variable somewhere on top ^
 # I will find a way to fix this at some point.
 
-RUN useradd -m -G sudo -s /bin/zsh "Thy_GoD" \
+RUN useradd -m -G sudo -s /bin/zsh "$USER_ALT" \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Add Worshipping Alter For My Beloved Vanguard (Azur Lane)  
+# P.S this can be changed to be any worship alter, be it frogs, eggs, beans, or ur mom.
+# Btw, the images shown are not mine, I do not own them.
+# I will give the sauce to where they can be found, though.
+  
+# Image 1: https://www.pixiv.net/artworks/99903167 - Rock-lee7
+# Image 2: https://www.pixiv.net/artworks/98796485 - Osatou
+# Image 3: https://www.pixiv.net/artworks/98573430 - Junineu
+# Image 4: https://www.pixiv.net/artworks/99683976 - Qiao GongZi
+# Image 5: https://www.pixiv.net/artworks/98670137 - Schreibe Shura
+# Image 6: https://www.pixiv.net/artworks/98791548 - Schreibe Shura
+  
+RUN mkdir /home/$USER_ALT/Vanguard_Worship_Alter && \
+    echo 'Vanguard (Azur Lane) My Beloved.' >> /home/$USER_ALT/Vanguard_Worship_Alter/offering.txt && \
+    echo "Replace login_text in ~/.login_text with the below line." >> /home/$USER_ALT/Vanguard_Worship_Alter/vanguard_greeting.txt && \
+    echo "figlet -ct Vanguard My Beloved | lolcat" >> /home/$USER_ALT/Vanguard_Worship_Alter/vanguard_greeting.txt && \
+    mkdir /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics && \
+    wget -P /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics \
+    https://cdn.donmai.us/sample/e9/75/__vanguard_and_vanguard_azur_lane_drawn_by_rock_lee7__sample-e9759b863a4c40aa3abc1428ffbe1fd9.jpg \
+    https://cdn.donmai.us/sample/30/1a/__vanguard_and_vanguard_azur_lane_drawn_by_osatou_soul_of_sugar__sample-301a1a9ae09f6f158df56148c824c8ae.jpg \
+    https://cdn.donmai.us/sample/21/ed/__vanguard_and_vanguard_azur_lane_drawn_by_junineu__sample-21ede8c155226916ee217a2f0a8a1e69.jpg \
+    https://cdn.donmai.us/sample/ed/7a/__vanguard_and_vanguard_azur_lane_drawn_by_qiao_gongzi__sample-ed7a878c5d7c5f8800e9fc5300619103.jpg \
+    https://cdn.donmai.us/original/6b/cc/__vanguard_and_vanguard_azur_lane_drawn_by_schreibe_shura__6bcc90093e21525f62516b2e8b0d57c1.jpg \
+    https://cdn.donmai.us/original/f8/65/__vanguard_azur_lane_drawn_by_schreibe_shura__f865cde10cda4a3eb1328147fd3a7543.jpg && \
+    for file in /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics/*; do \
+    jp2a --colors $file --color-depth=8 --term-height --term-width -b >> Vanguard_Appreciation_Post.txt; done
     
-RUN mkdir /home/Thy_GoD/Vanguard_Worship_Alter && \
-    echo 'Vanguard (Azur Lane) My Beloved.' >> /home/Thy_GoD/Vanguard_Worship_Alter/offering.txt && \
-    echo "Add the below line to ~/.login_text" >> /home/Thy_GoD/Vanguard_Worship_Alter/vanguard_greeting.txt && \
-    echo "figlet -ct Vanguard My Beloved" >> /home/Thy_GoD/Vanguard_Worship_Alter/vanguard_greeting.txt
-    
+         
 # Add Shared_Folder for volume mounting    
 
 RUN mkdir ~/Shared_Folder
@@ -255,6 +288,7 @@ RUN apt-get update && apt-get install -y \
     crunch \
     tmux \
     ftp \
+    webshells \
     && rm -rf /var/lib/apt/lists/*
     
 # Does a final update of everything
@@ -290,7 +324,7 @@ EXPOSE 9090
 # Gobuster was removed as I found ffuf to be better, you can revert these changes. 
 
 # Start as root (Can be changed)
-ENV PATH=/home/Thy_GoD/.local/bin:$PATH
+ENV PATH=/home/$USER_ALT/.local/bin:$PATH
 USER "root"
 WORKDIR /root/
 CMD zsh
