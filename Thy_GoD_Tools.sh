@@ -11,13 +11,13 @@ stop_container() {
 }
 
 # Set the container name
-CONTAINER_NAME="Thigh_Terminal2" # This value can be changed. 
+CONTAINER_NAME="Thigh_Terminal" # This value can be changed. 
 
 # Sets Terminal Title (Can be Changed)
 echo -ne "\033]0;$CONTAINER_NAME\007"
 
 # Set the image name
-IMAGE_NAME="thyimage/thy-terminal:testing" # This value can change depending on what you want to call your image. 
+IMAGE_NAME="thyimage/thy-terminal:latest" # This value can change depending on what you want to call your image. 
 
 # Set the path to the Dockerfile
 DOCKERFILE_PATH="." # This value can be changed for whatever reason. (Defaults to Repo Dir)
