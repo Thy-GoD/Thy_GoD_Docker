@@ -29,3 +29,11 @@ Update: Tested tmux and it should work fine, I will add it's installation to be 
 I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
 
 Btw, ports **443,80,8888,6969,8889,8080,9090** and **8585** are binded/used by default.
+
+## TODO List:
+
+Currently, I am fixing a couple bugs that occured after the latest commit (See the one with comments).
+I will plan on reorganizing everything (Creating files so that I won't have to echo everything manually).
+Lastly i'll do more testing and hope shit doesn't break.
+
+-Thigh GoD
