@@ -2,7 +2,7 @@
 
 Is a Personal Docker Image  with Pentest tools and zsh plugins, inspired by Nutek-Terminal and runs on a base Kali Image.
 
-There's also **autocomplete** and **autosyntaxhighlighting** on zsh, with a "cls" `clear && ls -a` alias.
+There's also **auto-complete** and **auto-syntax-highlighting** on zsh, with a "cls" `clear && ls -a` alias.
 
 Feel free to use this to make your own docker projects or whatever. 
 
@@ -32,7 +32,6 @@ Btw, ports **443,80,8888,6969,8889,8080,9090** and **8585** are binded/used by d
 
 ## TODO List:
 
-Currently, I am fixing a couple bugs that occured after the latest commit (See the one with comments).
 I will plan on reorganizing everything (Creating files so that I won't have to echo everything manually).
 Lastly i'll do more testing and hope shit doesn't break.
 
