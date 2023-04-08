@@ -11,13 +11,13 @@ stop_container() {
 }
 
 # Set the container name
-CONTAINER_NAME="Thigh_Terminal" # This value can be changed. 
+CONTAINER_NAME="Thigh_Terminal2" # This value can be changed. 
 
 # Sets Terminal Title (Can be Changed)
 echo -ne "\033]0;$CONTAINER_NAME\007"
 
 # Set the image name
-IMAGE_NAME="thyimage/thy-terminal:latest" # This value can change depending on what you want to call your image. 
+IMAGE_NAME="thyimage/thy-terminal:testing" # This value can change depending on what you want to call your image. 
 
 # Set the path to the Dockerfile
 DOCKERFILE_PATH="." # This value can be changed for whatever reason. (Defaults to Repo Dir)
@@ -34,19 +34,19 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo "Initiating Running Container....."
     echo ""
     # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME /usr/bin/zsh
+    docker exec -it $CONTAINER_NAME zsh
 
     
 # Check if the container exists and is stopped.
 elif [ "$(docker ps -a -f name=$CONTAINER_NAME | grep $CONTAINER_NAME | grep Exited)" ]; then
-    docker start -i $CONTAINER_NAME
+    docker start $CONTAINER_NAME
     clear
     # Sets Terminal Title (Can be Changed)
     echo -ne "\033]0;$CONTAINER_NAME\007"
     echo "Started Stopped Container....." 
     echo ""
     # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME /usr/bin/zsh
+    docker exec -it $CONTAINER_NAME zsh
     
 # Else, Build the Image using a Docker File.
 else
@@ -55,7 +55,7 @@ else
     
     # Run the container
     clear
-    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -e TERM=xterm-256color -v $SHARED_FOLDER_PATH:/root/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME 
+    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -v $SHARED_FOLDER_PATH:$HOME/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME zsh
     
     # This part can be edited to have Variable values, to allow greater customization. 
     # Note that --cap-add=NET_ADMIN is used to give the docker container more perms, port:port is used to bind docker ports to host ports.
