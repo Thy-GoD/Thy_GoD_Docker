@@ -42,14 +42,12 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     
 # Check if the container exists and is stopped.
 elif [ "$(docker ps -a -f name=$CONTAINER_NAME | grep $CONTAINER_NAME | grep Exited)" ]; then
-    docker start $CONTAINER_NAME
+    docker start $CONTAINER_NAME -i -a
     clear
     # Sets Terminal Title (Can be Changed)
     echo -ne "\033]0;$CONTAINER_NAME\007"
     echo "Started Stopped Container....." 
     echo ""
-    # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME zsh
     
 # Else, Build the Image using a Docker File.
 else
