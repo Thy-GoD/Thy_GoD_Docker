@@ -4,6 +4,7 @@ FROM kalilinux/kali-rolling
 
 # Environment Variables.
 # Change the HOME variable if you wish to default to a non-root user.
+# Change the HOME variable in the Tools.sh too.
 
 ENV USER_ALT=Thy_GoD
 ENV TERM=xterm-256color

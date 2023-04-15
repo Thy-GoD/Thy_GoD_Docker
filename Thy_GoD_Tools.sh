@@ -13,6 +13,9 @@ stop_container() {
 # Set the container name
 CONTAINER_NAME="Thigh_Terminal" # This value can be changed. 
 
+# Set home path 
+HOME_VAR="/root" # Change this if you made changes in the dockerfile.
+
 # Sets Terminal Title (Can be Changed)
 echo -ne "\033]0;$CONTAINER_NAME\007"
 
@@ -55,7 +58,7 @@ else
     
     # Run the container
     clear
-    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -v $SHARED_FOLDER_PATH:$HOME/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME zsh
+    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME zsh
     
     # This part can be edited to have Variable values, to allow greater customization. 
     # Note that --cap-add=NET_ADMIN is used to give the docker container more perms, port:port is used to bind docker ports to host ports.
