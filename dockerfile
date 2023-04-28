@@ -5,12 +5,14 @@ FROM kalilinux/kali-rolling
 # Environment Variables.
 # Change the HOME variable if you wish to default to a non-root user.
 # Change the HOME variable in the Tools.sh too.
+# Change the EDITRO variable if you wish to use an alternative editor.
 
 ENV USER_ALT=Thy_GoD
 ENV TERM=xterm-256color
 ENV SHELL=/bin/zsh
 ENV HOME=/root
 ENV PATH="${PATH}:${HOME}/.cargo/bin"
+ENV EDITOR=/usr/bin/nvim
 
 # Core Tools
 
@@ -253,8 +255,9 @@ RUN echo $PATH && \
 # Update: Added directory for tools/scripts.
 # This is to give github tools/scripts or POCs a special folder to live in <3.
 
-RUN mkdir ~/wordlists
-RUN mkdir ~/tools
+RUN mkdir ~/Wordlists && \
+    mkdir ~/Tools && \
+    mkdir ~/Notes 
 
 # Adds PSpy as an example tool.
 
@@ -319,6 +322,8 @@ RUN apt-get update && apt-get install -y \
     ftp \
     webshells \
     ranger \
+    chisel \
+    tshark \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
