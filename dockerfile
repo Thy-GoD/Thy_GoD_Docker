@@ -270,7 +270,7 @@ RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
 # Installs Payloads into payloads folder.
 
-RUN mkdir ~/payloads/
+RUN mkdir ~/Payloads/
 RUN git clone https://github.com/phoenix-journey/Payloads.git ~/payloads/Payloads
 
 # Installs Python tools with pipx:
