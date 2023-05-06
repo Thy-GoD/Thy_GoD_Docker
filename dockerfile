@@ -260,18 +260,20 @@ RUN mkdir ~/Wordlists && \
     mkdir ~/Notes 
 
 # Adds PSpy as an example tool.
+# Change chmod value if you wish to use different perm values.
 
-RUN wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 -O ~/tools/pspy64 && \
-    chmod 777 ~/tools/pspy64 # Change this if you wish to use different perm values.
+RUN wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 -O ~/Tools/pspy64 && \
+    chmod 777 ~/Tools/pspy64 
+
 
 # Vulscan
 
 RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
-# Installs Payloads into payloads folder.
+# Installs Payloads into Payloads folder.
 
 RUN mkdir ~/Payloads/
-RUN git clone https://github.com/phoenix-journey/Payloads.git ~/payloads/Payloads
+RUN git clone https://github.com/phoenix-journey/Payloads.git ~/Payloads/Payloads-Github
 
 # Installs Python tools with pipx:
 
