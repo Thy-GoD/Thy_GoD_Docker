@@ -154,7 +154,7 @@ RUN \
     echo 'znap prompt Thy-GoD/thy-god-zsh-theme ThyGoD' >> ~/.zshrc && \
     echo '' >> ~/.zshrc && \
     echo '# `znap source` automatically downloads and starts your plugins.' >> ~/.zshrc && \
-    echo '# znap source marlonrichert/zsh-autocomplete' >> ~/.zshrc && \
+    echo 'znap source marlonrichert/zsh-autocomplete' >> ~/.zshrc && \
     echo 'znap source zsh-users/zsh-syntax-highlighting' >> ~/.zshrc && \
     echo '' >> ~/.zshrc && \
     echo '# `znap eval` caches and runs any kind of command output for you.' >> ~/.zshrc && \
