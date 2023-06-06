@@ -13,6 +13,7 @@ ENV SHELL=/bin/zsh
 ENV HOME=/root
 ENV PATH="${PATH}:${HOME}/.cargo/bin"
 ENV EDITOR=/usr/bin/nvim
+ENV TZ="Asia/Singapore"
 
 # Core Tools
 
@@ -152,6 +153,10 @@ RUN git clone https://github.com/phoenix-journey/Payloads.git ~/Payloads/Payload
 
 RUN pipx install impacket
 
+# Installs Tmux Theme:
+
+RUN git clone https://github.com/wfxr/tmux-power.git ~/.tmux/themes/
+
 # Install Tools and Open Planned Ports
 
 RUN apt-get update && apt-get install -y \
@@ -200,6 +205,7 @@ RUN apt-get update && apt-get install -y \
     chisel \
     tshark \
     pwncat \
+    ttf-ancient-fonts \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -213,6 +219,7 @@ RUN sudo apt-get update && apt-get upgrade -y && \
 # Add Chown Perms for Alt User
 
 COPY Config/.* ${HOME}/
+COPY Config/init.vim ${HOME}/.config/nvim
 COPY --chown=${USER_ALT}:${USER_ALT} Config/.* /home/${USER_ALT}/
 COPY --chown=${USER_ALT}:${USER_ALT} Config/Vanguard_Worship_Files/* /home/${USER_ALT}/Vanguard_Worship_Alter/
 
