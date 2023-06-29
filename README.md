@@ -28,11 +28,12 @@ Update: Tested tmux and it should work fine, I will add it's installation to be 
 
 I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
 
-Btw, ports **443,80,8888,6969,8889,8080,9090** and **8585** are binded/used by default.
+Please give the dockerfile and Tools.sh a read as there is alot of customization/notifications.
 
 ## TODO List:
 
 I will plan on reorganizing everything (Creating files so that I won't have to echo everything manually).
+<br>
 Lastly i'll do more testing and hope shit doesn't break.
 
 -Thigh GoD
