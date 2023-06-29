@@ -14,6 +14,7 @@ ENV HOME=/root
 ENV PATH="${PATH}:${HOME}/.cargo/bin"
 ENV EDITOR=/usr/bin/nvim
 ENV TZ="Asia/Singapore"
+ENV GOPATH="${HOME}/.go"
 
 # Core Tools
 
@@ -49,6 +50,7 @@ RUN apt-get update && apt-get install -y \
     seclists \
     jp2a \
     lolcat \
+    golang \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -127,9 +129,11 @@ RUN cargo install xh && \
 
 # Update: Added directory for tools/scripts.
 # This is to give github tools/scripts or POCs a special folder to live in <3.
+# Added directories in Tools folder
 
 RUN mkdir ~/Wordlists && \
     mkdir ~/Tools && \
+    mkdir ~/Tools/DIY_Tools && \
     mkdir ~/Notes 
 
 # Adds PSpy & Linpeas as an example tool.
@@ -145,17 +149,38 @@ RUN wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 
 RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
 # Installs Payloads into Payloads folder.
+# Adds POC and msfvenom payload folders
 
-RUN mkdir ~/Payloads/
-RUN git clone https://github.com/phoenix-journey/Payloads.git ~/Payloads/Payloads-Github
+RUN mkdir ~/Payloads/ && git clone https://github.com/phoenix-journey/Payloads.git ~/Payloads/Payloads-Github
+RUN mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
 
 # Installs Python tools with pipx:
 
-RUN pipx install impacket
+# Removed impacket installation as it was not needed.
 
 # Installs Tmux Theme:
 
 RUN git clone https://github.com/wfxr/tmux-power.git ~/.tmux/themes/
+
+# Install Villain
+
+RUN git clone https://github.com/t3l3machus/Villain.git ~/Tools/Villain && \
+    pip3 install -r ~/Tools/Villain/requirements.txt 2>/dev/null 1>/dev/null && \
+    chmod 777 ~/Tools/Villain/Villain.py
+    
+# Install git dumper
+
+RUN git clone https://github.com/arthaud/git-dumper.git ~/Tools/git-dumper && \
+    pip3 install -r ~/Tools/git-dumper/requirements.txt 2>/dev/null 1>/dev/null && \
+    chmod 777 ~/Tools/git-dumper/git_dumper.py
+    
+# Installs Pretender (Updated mitm6)
+# It will be installed in ~/Shared_Folder as only host has access to ipv6.
+# Ofc if you run --network=host, this could be used from within the container itself.
+# If I find a way to make it work without --network=host, I will update it.
+
+RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Shared_Folder/pretender && \
+    go build -C ~/Shared_Folder/pretender/ -ldflags '-X main.vendorInterface=eth0'
 
 # Install Tools and Open Planned Ports
 
@@ -191,7 +216,6 @@ RUN apt-get update && apt-get install -y \
     jq \
     libncurses5-dev \
     libncursesw5-dev \
-    perl \
     exploitdb \
     hashid \
     man-db \
@@ -201,11 +225,12 @@ RUN apt-get update && apt-get install -y \
     tmux \
     ftp \
     webshells \
-    ranger \
     chisel \
     tshark \
     pwncat \
     ttf-ancient-fonts \
+    impacket-scripts \
+    python3-impacket \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -228,7 +253,7 @@ COPY --chown=${USER_ALT}:${USER_ALT} Config/Vanguard_Worship_Files/* /home/${USE
 RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
 
 # Signifies Ports to be Used. 
-# (21 for ftp, 22 for SSH, 80 for HTTP, 443 for HTTPS, 445 for SMB, 8080 for MITMProxy)
+# (21 for ftp, 22 for SSH, 80 for HTTP, 443 for HTTPS, 445 for SMB, 8080 for MITMProxy, 4443 & 6501 for Villian)
 # Rest are extras for MISC usages. 
 
 EXPOSE 21
@@ -236,6 +261,9 @@ EXPOSE 22
 EXPOSE 80
 EXPOSE 443
 EXPOSE 445
+EXPOSE 4443
+EXPOSE 6501
+EXPOSE 6666
 EXPOSE 6969
 EXPOSE 8081
 EXPOSE 8080
@@ -243,6 +271,7 @@ EXPOSE 8585
 EXPOSE 8888
 EXPOSE 8889
 EXPOSE 9090
+
 
 # Set up additional configurations as needed
 # I recommend package managers if you need them like npm or brew,

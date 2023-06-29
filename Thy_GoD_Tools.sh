@@ -29,6 +29,9 @@ DOCKERFILE_PATH="." # This value can be changed for whatever reason. (Defaults t
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SHARED_FOLDER_PATH="$SCRIPT_DIR/Shared_Folder"
 
+# Finds Host's IP Address
+HOST_IP=$(hostname -I | awk '{print $1}') 
+
 # Check if the container is already running.
 if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     clear
@@ -37,7 +40,7 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo "Initiating Running Container....."
     echo ""
     # Start an Interactive shell
-    docker exec -it $CONTAINER_NAME zsh
+    docker exec -it -e HOST_IP=$HOST_IP $CONTAINER_NAME zsh
 
     
 # Check if the container exists and is stopped.
@@ -48,7 +51,8 @@ elif [ "$(docker ps -a -f name=$CONTAINER_NAME | grep $CONTAINER_NAME | grep Exi
     echo "Started Stopped Container....." 
     echo ""
     # Runs the Container
-    docker start $CONTAINER_NAME -i -a
+    docker start $CONTAINER_NAME 1>/dev/null
+    docker exec -it -e HOST_IP=$HOST_IP $CONTAINER_NAME zsh
     
 # Else, Build the Image using a Docker File.
 else
@@ -57,7 +61,7 @@ else
     
     # Run the container
     clear
-    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME zsh
+    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 6666:6666 -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -p 4443:4443 -p 6501:6501 -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder --name $CONTAINER_NAME $IMAGE_NAME zsh
     
     # This part can be edited to have Variable values, to allow greater customization. 
     # Note that --cap-add=NET_ADMIN is used to give the docker container more perms, port:port is used to bind docker ports to host ports.
