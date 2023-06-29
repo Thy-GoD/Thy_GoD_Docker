@@ -1,0 +1,5 @@
+#!/bin/bash
+# Rename this to Login_Text and replace the old one in Home dir.
+# Alternatively, just replace the Login_Text contents with whatever you want.
+
+figlet -ct Vanguard My Beloved | lolcat
