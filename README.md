@@ -20,9 +20,13 @@ You can make this container as a *terminal* by creating a shortcut that runs the
 
 tools.sh automatically starts the container, enters a running container, and stops the docker container when the "exit" command is used.
 
-Container has not been tested with tmux, but Konsole's split view instead.
+It is possible to use a terminal's split-view feature to split the docker terminal window, but honestly it's best to just use tmux.
 
-Update: Tested tmux and it should work fine, I will add it's installation to be by default.
+I have added a custom tmux configuration that uses Ctrl + A as the entry command.
+
+FYI, run `xhost +local:$(id -nu)` to allow your container to use the host's display.
+
+Note that this is automatically done in the tools script, but I have not tested if it works all the time.
 
 ## Note: 
 
@@ -32,8 +36,8 @@ Please give the dockerfile and Tools.sh a read as there is alot of customization
 
 ## TODO List:
 
-I will plan on reorganizing everything (Creating files so that I won't have to echo everything manually).
-<br>
-Lastly i'll do more testing and hope shit doesn't break.
+Add more features and constant bug fixes/updates to functionality.
+My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
+while maintaining all my configurations and tools for pentesting.
 
 -Thigh GoD

@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     python3-pip \
     pipx \
-    mlocate \
+    locate \
     openssh-client \
     pkg-config \
     fonts-powerline \
@@ -51,6 +51,10 @@ RUN apt-get update && apt-get install -y \
     jp2a \
     lolcat \
     golang \
+    feh \
+    freerdp2-x11 \
+    neo4j \
+    lua5.4\
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -181,6 +185,28 @@ RUN git clone https://github.com/arthaud/git-dumper.git ~/Tools/git-dumper && \
 
 RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Shared_Folder/pretender && \
     go build -C ~/Shared_Folder/pretender/ -ldflags '-X main.vendorInterface=eth0'
+    
+# Install NeoVim plugin manager.
+
+RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    
+# Installs Bloodhound (in /SharedFolder as it's currently bugged inside docker.)
+# You will need to run BloodHound with --no-sandbox from Host via Shared_Folder
+# Finds the latest bloodhound package.
+
+RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/BloodHound/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
+    latest=$(echo "${latest/tag/download}") && \
+    latest+="/BloodHound-linux-x64.zip" && \
+    wget -O BloodHound.zip ${latest} && \
+    unzip BloodHound.zip && \
+    rm BloodHound.zip && mv BloodHound-linux-x64 ~/Shared_Folder/
+
+# Install jwt-token tool
+
+RUN git clone https://github.com/ticarpi/jwt_tool.git ~/Tools/jwt_tool && \
+    pip3 install -r ~/Tools/jwt_tool/requirements.txt && \
+    chmod 777 ~/Tools/jwt_tool/jwt_tool.py
 
 # Install Tools and Open Planned Ports
 
@@ -231,6 +257,9 @@ RUN apt-get update && apt-get install -y \
     ttf-ancient-fonts \
     impacket-scripts \
     python3-impacket \
+    python3-neovim \
+    certipy-ad \
+    gpp-decrypt \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -244,9 +273,12 @@ RUN sudo apt-get update && apt-get upgrade -y && \
 # Add Chown Perms for Alt User
 
 COPY Config/.* ${HOME}/
-COPY Config/init.vim ${HOME}/.config/nvim
+COPY Config/init.lua ${HOME}/.config/nvim/init.lua
 COPY --chown=${USER_ALT}:${USER_ALT} Config/.* /home/${USER_ALT}/
 COPY --chown=${USER_ALT}:${USER_ALT} Config/Vanguard_Worship_Files/* /home/${USER_ALT}/Vanguard_Worship_Alter/
+
+# Activates init.lua (NeoVim) file.
+RUN nvim --headless +PlugInstall +qall 1>/dev/null
 
 # Sets Execute Perms on offering script.
     
@@ -265,6 +297,8 @@ EXPOSE 4443
 EXPOSE 6501
 EXPOSE 6666
 EXPOSE 6969
+EXPOSE 7474
+EXPOSE 7687
 EXPOSE 8081
 EXPOSE 8080
 EXPOSE 8585

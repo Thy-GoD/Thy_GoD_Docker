@@ -276,6 +276,7 @@ export PATH="/usr/games:${PATH}"
 export PATH="${HOME}/Tools/Villain:${PATH}"
 export TZ="Asia/Singapore" # Change this if you don't live in Singapore (Obviously)
 export GOPATH="${HOME}/.go"
+export DISPLAY=":0.0"
 
 
 
