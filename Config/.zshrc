@@ -244,7 +244,7 @@ fi
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
-alias cme='crackmapexec'
+alias cme="crackmapexec"
 
 # enable auto-suggestions based on the history
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
@@ -258,43 +258,16 @@ if [ -f /etc/zsh_command_not_found ]; then
     . /etc/zsh_command_not_found
 fi
 
-# End of Default ZSH Configuration ^
-#####################################
-#####################################
-# Sets Up Exports to Avoid Conflicts.
-
-
-# Checks if Cargo is installed, then activates it.
-if [ -d ${HOME}/.cargo/env ]; then
-        source ~/.cargo/env
-fi
-
-export EDITOR=/usr/bin/nvim # Change the default editor if you want to.
-export USER_ALT=$(grep "zsh" /etc/passwd | cut -d: -f1) # Wowie a Bash command
-export PATH="/home/${USER_ALT}/.local/bin:${PATH}"
+source ~/.cargo/env
+export PATH="${HOME}/.local/bin:/home/Thy_GoD/.local/bin:${PATH}"
 export PATH="/usr/games:${PATH}"
 export PATH="${HOME}/Tools/Villain:${PATH}"
-export TZ="Asia/Singapore" # Change this if you don't live in Singapore (Obviously)
 export GOPATH="${HOME}/.go"
 export DISPLAY=":0.0"
 
-
-
-
-# Custom Aliases.
-alias cls='clear && ls -l'
-
-# Removes Login Message.
-touch ~/.hushlogin
-
-# Enables Custom Login Text.
 bash ~/.login_text
 
-# Removes Core Dumps.
 ulimit -c 0
-
-
-
 
 # Downloads Znap
 [[ -f ~/.ZSH_FILES/Git/zsh-snap/znap.zsh ]] ||
@@ -310,7 +283,7 @@ znap source ohmyzsh/ohmyzsh plugins/git-prompt # plugin used by my theme
 znap prompt Thy-GoD/thy-god-zsh-theme ThyGoD
 
 # `znap source` automatically downloads and starts your plugins.
-znap source marlonrichert/zsh-autocomplete # Comment out if buggy.
+znap source marlonrichert/zsh-autocomplete
 znap source zsh-users/zsh-syntax-highlighting
 
 # `znap eval` caches and runs any kind of command output for you.
@@ -320,11 +293,11 @@ znap eval iterm2 'curl -fsSL https://iterm2.com/shell_integration/zsh'
 znap function _pyenv pyenv 'eval "$( pyenv init - --no-rehash )"'
 compctl -K    _pyenv pyenv
 
+# Initialization Commands
 zstyle ':autocomplete:*' min-input 3
+alias cls='clear && ls -l'
+znap eval atuin "atuin init zsh"
+updatedb
 
-
-
-# Checks if Atuin is installed, then Enables it.
-if command -v atuin &> /dev/null; then
-        eval "$(atuin init zsh)" 
-fi
+# Disables Welcome Text
+touch ~/.hushlogin

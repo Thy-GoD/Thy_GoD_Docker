@@ -55,6 +55,7 @@ RUN apt-get update && apt-get install -y \
     freerdp2-x11 \
     neo4j \
     lua5.4\
+    proxychains \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -178,6 +179,12 @@ RUN git clone https://github.com/arthaud/git-dumper.git ~/Tools/git-dumper && \
     pip3 install -r ~/Tools/git-dumper/requirements.txt 2>/dev/null 1>/dev/null && \
     chmod 777 ~/Tools/git-dumper/git_dumper.py
     
+# Installs powerview.py (Thanks to the creator for troubleshooting a problem I had w the script.)
+
+RUN git clone https://github.com/aniqfakhrul/powerview.py.git ~/Tools/powerview.py && \
+    pip3 install -r ~/Tools/powerview.py/requirements.txt 2>/dev/null 1>/dev/null && \
+    chmod 777 ~/Tools/powerview.py/powerview.py
+    
 # Installs Pretender (Updated mitm6)
 # It will be installed in ~/Shared_Folder as only host has access to ipv6.
 # Ofc if you run --network=host, this could be used from within the container itself.
@@ -192,7 +199,7 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     
 # Installs Bloodhound (in /SharedFolder as it's currently bugged inside docker.)
-# You will need to run BloodHound with --no-sandbox from Host via Shared_Folder
+# You will need to run BloodHound with --no-sandbox from Host via Shared_Folder if ur root.
 # Finds the latest bloodhound package.
 
 RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/BloodHound/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
