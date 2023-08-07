@@ -58,6 +58,7 @@ RUN apt-get update && apt-get install -y \
     lua5.4\
     httprobe \
     awscli \
+    burpsuite \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
