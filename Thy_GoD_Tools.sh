@@ -70,7 +70,8 @@ else
     clear
     echo "Just a couple notes, please change your neo4j and burpsuite settings (or any similar) to enable listening on all interfaces."
     echo "This is cuz you won't be able to use them properly as your container is refusing connections from the host."
-    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 6666:6666 -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -p 4443:4443 -p 6501:6501 -p 7687:7687 -p 7474:7474 -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --name $CONTAINER_NAME $IMAGE_NAME zsh
+    echo "--device command might break or not work, it's there to make ligolo-ng work."
+    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 6666:6666 -p 8888:8888 -p 8081:8081 -p 6969:6969 -p 8889:8889 -p 8080:8080 -p 9090:9090 -p 8585:8585 -p 443:443 -p 80:80 -p 445:445 -p 21:21 -p 22:22 -p 4443:4443 -p 6501:6501 -p 7687:7687 -p 7474:7474 -p 53:53 -p 88:88 -p 389:389 -p 636:636 -p 1180:1180 -p 5985:5985 -p 11601:11601 -p 8000:8000 --device /dev/net/tun:/dev/net/tun -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --name $CONTAINER_NAME $IMAGE_NAME zsh
     
     # This part can be edited to have Variable values, to allow greater customization. 
     # Note that --cap-add=NET_ADMIN is used to give the docker container more perms, port:port is used to bind docker ports to host ports.
@@ -80,6 +81,7 @@ else
     # Well technically I can make them permanent but o well.
     # FYI you can add '--rm' to remove the container and all of it's contents once you exit it.
     # Update: It is recommended to run xhost +local:$(id -nu) to allow the docker container to use the host's display.
+    # This is run automatically by default, tho.
 fi
 
 # Binds the 'exit' command to the stop_container function

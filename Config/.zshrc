@@ -301,3 +301,13 @@ updatedb
 
 # Disables Welcome Text
 touch ~/.hushlogin
+
+# Checks for ligolo-ng tun
+# Check if TUN/TAP interface "ligolo" exists
+if  ! [[ $(ip tuntap show dev ligolo &>/dev/null) ]]; then
+    sudo ip tuntap add user "$USERNAME" mode tun ligolo &>/dev/null
+fi
+# Check if TUN/TAP interface "ligolo" is up
+if  ! [[ $(ip link show dev ligolo up &>/dev/null) ]]; then
+    sudo ip link set ligolo up &>/dev/null
+fi

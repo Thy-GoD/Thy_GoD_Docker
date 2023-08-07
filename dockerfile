@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     curl \
     apt-utils \
+    iproute2 \
     build-essential
 
 # Switch shell to zsh.
@@ -55,7 +56,8 @@ RUN apt-get update && apt-get install -y \
     freerdp2-x11 \
     neo4j \
     lua5.4\
-    proxychains \
+    httprobe \
+    awscli \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -102,17 +104,12 @@ RUN mkdir /home/$USER_ALT/Vanguard_Worship_Alter && \
 
 RUN mkdir ~/Shared_Folder
 
-# Install neovim and bat
+# Install neovim (Yes I made a whole section just for Neovim lmao)
+# Batcat has been removed in favor of neovim.
 
 RUN apt-get update && apt-get install -y \
     neovim \
-    bat \
     && rm -rf /var/lib/apt/lists/*
-    
-# Sets up symlink for bat (Cat replacement) 
-
-RUN mkdir -p ~/.local/bin && \
-    ln -s /usr/bin/batcat ~/.local/bin/bat
 
 # Starts setting up rust and crates.io
 
@@ -139,25 +136,28 @@ RUN cargo install xh && \
 RUN mkdir ~/Wordlists && \
     mkdir ~/Tools && \
     mkdir ~/Tools/DIY_Tools && \
-    mkdir ~/Notes 
-
-# Adds PSpy & Linpeas as an example tool.
-# Change chmod value if you wish to use different perm values.
-
-RUN wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 -O ~/Tools/pspy64 && \
-    wget https://github.com/carlospolop/PEASS-ng/releases/download/20230425-bd7331ea/linpeas.sh -P ~/Tools/linpeas.sh && \
-    chmod 777 ~/Tools/pspy64 && \
-    chmod 777 ~/Tools/linpeas.sh
-
+    mkdir ~/Notes
+    
 # Vulscan
 
 RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 
-# Installs Payloads into Payloads folder.
+# Creates Payloads folder.
+# Payload repo was removed due to deprecation.
 # Adds POC and msfvenom payload folders
 
-RUN mkdir ~/Payloads/ && git clone https://github.com/phoenix-journey/Payloads.git ~/Payloads/Payloads-Github
-RUN mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
+RUN mkdir ~/Payloads && mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
+
+# Adds PSpy an example tool.
+# Linpeas/Winpeas has been removed as a default tool due to peass package.
+# Change chmod value if you wish to use different perm values.
+
+RUN latest=$(curl -IL -s https://github.com/DominicBreuker/pspy/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
+    latest=$(echo "${latest/tag/download}") && \
+    latest+="/pspy64" && \
+    wget -O pspy64 ${latest} && \
+    mv pspy64 ~/Payloads/ && \
+    chmod 777 ~/Payloads/pspy64
 
 # Installs Python tools with pipx:
 
@@ -167,7 +167,7 @@ RUN mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
 
 RUN git clone https://github.com/wfxr/tmux-power.git ~/.tmux/themes/
 
-# Install Villain
+# Install Villain (Thanks to the Creator for noticing my feature request)
 
 RUN git clone https://github.com/t3l3machus/Villain.git ~/Tools/Villain && \
     pip3 install -r ~/Tools/Villain/requirements.txt 2>/dev/null 1>/dev/null && \
@@ -198,7 +198,7 @@ RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Shared_Folder
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     
-# Installs Bloodhound (in /SharedFolder as it's currently bugged inside docker.)
+# Installs Bloodhound + SharpHound (in /SharedFolder as it's currently bugged inside docker.)
 # You will need to run BloodHound with --no-sandbox from Host via Shared_Folder if ur root.
 # Finds the latest bloodhound package.
 
@@ -212,8 +212,49 @@ RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/BloodHound/releases/lat
 # Install jwt-token tool
 
 RUN git clone https://github.com/ticarpi/jwt_tool.git ~/Tools/jwt_tool && \
-    pip3 install -r ~/Tools/jwt_tool/requirements.txt && \
+    pip3 install -r ~/Tools/jwt_tool/requirements.txt 2>/dev/null 1>/dev/null && \
     chmod 777 ~/Tools/jwt_tool/jwt_tool.py
+    
+# Install webpack unpacker
+
+RUN git clone https://github.com/rarecoil/unwebpack-sourcemap.git ~/Tools/unwebpack-sourcemap && \
+    pip3 install -r ~/Tools/unwebpack-sourcemap/requirements.txt 2>/dev/null 1>/dev/null && \
+    chmod 777 ~/Tools/unwebpack-sourcemap/unwebpack_sourcemap.py
+    
+# Install ligolo-ng (Pivoting/Tunneling Tool)
+# I've also added in the Windows versions as well.
+# I really do love this tool, and I'll promote @opcode (https://gitlab.com/0pcode) for helping me out w this tool. <3
+
+RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
+    go build -o ligolo-proxy -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy ~/Tools/ligolo-ng && \
+    go build -o ligolo-agent -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent ~/Tools/ligolo-ng && \
+    GOOS=windows go build -o ligolo-proxy.exe -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
+    GOOS=windows go build -o ligolo-agent.exe -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
+
+# Installs Pass The Cert, this is as sometimes certipy will break/stop working.
+
+RUN git clone https://github.com/AlmondOffSec/PassTheCert.git ~/Tools/PassTheCert && \
+    chmod 777 ~/Tools/PassTheCert/Python/passthecert.py
+    
+# Installs username-anarchy, a tool that generates usernames from a list of people's names for you.
+RUN git clone https://github.com/urbanadventurer/username-anarchy.git ~/Tools/username-anarchy && \
+    chmod 777 ~/Tools/username-anarchy/username-anarchy
+    
+# Installs ConPtyShell
+
+RUN latest=$(curl -IL -s https://github.com/antonioCoco/ConPtyShell/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
+    latest=$(echo "${latest/tag/download}") && \
+    latest+="/ConPtyShell.zip" && \
+    wget -O ConPtyShell.zip ${latest} && \
+    unzip ConPtyShell.zip -d ~/Payloads/ && \
+    rm ConPtyShell.zip
+    
+# Installs Ngrok (Proxy through internet to localhost)
+
+RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
+    echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
+    sudo apt update && sudo apt upgrade && sudo apt install ngrok
+
 
 # Install Tools and Open Planned Ports
 
@@ -222,10 +263,7 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     ncat \
     metasploit-framework \
-    curl \
-    wget \
     perl \
-    git \
     feroxbuster \
     tcpdump \
     nmap \
@@ -258,8 +296,7 @@ RUN apt-get update && apt-get install -y \
     tmux \
     ftp \
     webshells \
-    chisel \
-    tshark \
+    wireshark \
     pwncat \
     ttf-ancient-fonts \
     impacket-scripts \
@@ -267,6 +304,7 @@ RUN apt-get update && apt-get install -y \
     python3-neovim \
     certipy-ad \
     gpp-decrypt \
+    peass \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -291,28 +329,35 @@ RUN nvim --headless +PlugInstall +qall 1>/dev/null
     
 RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
 
+
 # Signifies Ports to be Used. 
-# (21 for ftp, 22 for SSH, 80 for HTTP, 443 for HTTPS, 445 for SMB, 8080 for MITMProxy, 4443 & 6501 for Villian)
-# Rest are extras for MISC usages. 
+# Most are tool/service related or misc.
 
 EXPOSE 21
 EXPOSE 22
+EXPOSE 53
 EXPOSE 80
+EXPOSE 88
+EXPOSE 389
 EXPOSE 443
 EXPOSE 445
+EXPOSE 636 
+EXPOSE 1180
 EXPOSE 4443
+EXPOSE 5985
 EXPOSE 6501
 EXPOSE 6666
 EXPOSE 6969
 EXPOSE 7474
 EXPOSE 7687
+EXPOSE 8000
 EXPOSE 8081
 EXPOSE 8080
 EXPOSE 8585
 EXPOSE 8888
 EXPOSE 8889
 EXPOSE 9090
-
+EXPOSE 11601
 
 # Set up additional configurations as needed
 # I recommend package managers if you need them like npm or brew,
