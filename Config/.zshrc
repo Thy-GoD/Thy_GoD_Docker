@@ -297,7 +297,6 @@ compctl -K    _pyenv pyenv
 zstyle ':autocomplete:*' min-input 3
 alias cls='clear && ls -l'
 znap eval atuin "atuin init zsh"
-updatedb
 
 # Disables Welcome Text
 touch ~/.hushlogin

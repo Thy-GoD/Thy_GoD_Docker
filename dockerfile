@@ -187,19 +187,19 @@ RUN git clone https://github.com/aniqfakhrul/powerview.py.git ~/Tools/powerview.
     chmod 777 ~/Tools/powerview.py/powerview.py
     
 # Installs Pretender (Updated mitm6)
-# It will be installed in ~/Shared_Folder as only host has access to ipv6.
+# You will need to move the tool to the shared folder in order to use it.
 # Ofc if you run --network=host, this could be used from within the container itself.
 # If I find a way to make it work without --network=host, I will update it.
 
-RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Shared_Folder/pretender && \
-    go build -C ~/Shared_Folder/pretender/ -ldflags '-X main.vendorInterface=eth0'
+RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Tools/pretender && \
+    go build -C ~/Tools/pretender/ -ldflags '-X main.vendorInterface=eth0'
     
 # Install NeoVim plugin manager.
 
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     
-# Installs Bloodhound + SharpHound (in /SharedFolder as it's currently bugged inside docker.)
+# Installs Bloodhound + SharpHound
 # You will need to run BloodHound with --no-sandbox from Host via Shared_Folder if ur root.
 # Finds the latest bloodhound package.
 
@@ -208,7 +208,7 @@ RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/BloodHound/releases/lat
     latest+="/BloodHound-linux-x64.zip" && \
     wget -O BloodHound.zip ${latest} && \
     unzip BloodHound.zip && \
-    rm BloodHound.zip && mv BloodHound-linux-x64 ~/Shared_Folder/
+    rm BloodHound.zip && mv BloodHound-linux-x64 ~/Tools/
 
 # Install jwt-token tool
 
@@ -255,7 +255,6 @@ RUN latest=$(curl -IL -s https://github.com/antonioCoco/ConPtyShell/releases/lat
 RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
     echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
     sudo apt update && sudo apt upgrade && sudo apt install ngrok
-
 
 # Install Tools and Open Planned Ports
 
