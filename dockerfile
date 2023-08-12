@@ -319,7 +319,6 @@ RUN sudo apt-get update && apt-get upgrade -y && \
 
 COPY Config/.* ${HOME}/
 COPY Config/init.lua ${HOME}/.config/nvim/init.lua
-COPY --chown=${USER_ALT}:${USER_ALT} Config/.* /home/${USER_ALT}/
 COPY --chown=${USER_ALT}:${USER_ALT} Config/Vanguard_Worship_Files/* /home/${USER_ALT}/Vanguard_Worship_Alter/
 
 # Activates init.lua (NeoVim) file.
