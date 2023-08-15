@@ -37,6 +37,9 @@ Please give the dockerfile and Tools.sh a read as there is alot of customization
 ## TODO List:
 
 Add more features and constant bug fixes/updates to functionality.
+Add images and screenshots to make people actually want to use this lmao.
+Somehow find a way to magically make IPV6 DNS Takeover Attacks work.
+Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers.
 My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
 while maintaining all my configurations and tools for pentesting.
 

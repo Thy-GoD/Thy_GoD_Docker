@@ -310,3 +310,11 @@ fi
 if  ! [[ $(ip link show dev ligolo up &>/dev/null) ]]; then
     sudo ip link set ligolo up &>/dev/null
 fi
+
+# Moves Pretender to Shared Folder. (P smart right?!)
+Shared_Dir="${HOME}/Shared_Folder"
+Tools_Dir="${HOME}/Tools" 
+
+if [[ -d "${Tools_Dir}/pretender" ]]; then
+    mv "${Tools_Dir}/pretender" "${Shared_Dir}"
+fi

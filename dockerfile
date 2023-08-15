@@ -59,6 +59,8 @@ RUN apt-get update && apt-get install -y \
     httprobe \
     awscli \
     burpsuite \
+    villain \
+    bloodhound \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -160,8 +162,6 @@ RUN latest=$(curl -IL -s https://github.com/DominicBreuker/pspy/releases/latest 
     mv pspy64 ~/Payloads/ && \
     chmod 777 ~/Payloads/pspy64
 
-# Installs Python tools with pipx:
-
 # Removed impacket installation as it was not needed.
 
 # Installs Tmux Theme:
@@ -169,10 +169,12 @@ RUN latest=$(curl -IL -s https://github.com/DominicBreuker/pspy/releases/latest 
 RUN git clone https://github.com/wfxr/tmux-power.git ~/.tmux/themes/
 
 # Install Villain (Thanks to the Creator for noticing my feature request)
+# This has been deprecated as it's possible to install it via apt now.
+# Congratulations to the creator for having their project recognized!
 
-RUN git clone https://github.com/t3l3machus/Villain.git ~/Tools/Villain && \
-    pip3 install -r ~/Tools/Villain/requirements.txt 2>/dev/null 1>/dev/null && \
-    chmod 777 ~/Tools/Villain/Villain.py
+#RUN git clone https://github.com/t3l3machus/Villain.git ~/Tools/Villain && \
+#    pip3 install -r ~/Tools/Villain/requirements.txt 2>/dev/null 1>/dev/null && \
+#    chmod 777 ~/Tools/Villain/Villain.py
     
 # Install git dumper
 
@@ -200,15 +202,16 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     
 # Installs Bloodhound + SharpHound
-# You will need to run BloodHound with --no-sandbox from Host via Shared_Folder if ur root.
-# Finds the latest bloodhound package.
+# Update: Bloodhound no longer needs to be installed manually, hence I will be reverting to apt instead.
+# Additionally, due to a bug with SharpHound, it will be installed manually.
 
-RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/BloodHound/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
-    latest=$(echo "${latest/tag/download}") && \
-    latest+="/BloodHound-linux-x64.zip" && \
-    wget -O BloodHound.zip ${latest} && \
-    unzip BloodHound.zip && \
-    rm BloodHound.zip && mv BloodHound-linux-x64 ~/Tools/
+RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/SharpHound/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \
+    latest="${latest/tag/download}" && \
+    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
+    download_link="https://github.com/BloodHoundAD/SharpHound/releases/download/${latest}/SharpHound-${version}.zip" && \
+    wget -O SharpHound.zip "$download_link" && \
+    unzip SharpHound.zip -d ~/Payloads/ && \
+    rm SharpHound.zip
 
 # Install jwt-token tool
 
@@ -231,6 +234,10 @@ RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
     go build -o ligolo-agent -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent ~/Tools/ligolo-ng && \
     GOOS=windows go build -o ligolo-proxy.exe -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
     GOOS=windows go build -o ligolo-agent.exe -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
+
+# Installs Waybackurls (Very simple installation, I'm putting this here since ik go has been working properly.)
+
+RUN go install github.com/tomnomnom/waybackurls@latest
 
 # Installs Pass The Cert, this is as sometimes certipy will break/stop working.
 
@@ -257,6 +264,7 @@ RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/t
     sudo apt update && sudo apt upgrade && sudo apt install ngrok
 
 # Install Tools and Open Planned Ports
+# FYI Impacket is installed twice as a fallback measure.
 
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -331,18 +339,23 @@ RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
 
 # Signifies Ports to be Used. 
 # Most are tool/service related or misc.
+# UDP ones exist cuz of Responder.
 
 EXPOSE 21
 EXPOSE 22
 EXPOSE 53
 EXPOSE 80
 EXPOSE 88
+EXPOSE 137/udp
+EXPOSE 138/udp
 EXPOSE 389
 EXPOSE 443
 EXPOSE 445
 EXPOSE 636 
 EXPOSE 1180
 EXPOSE 4443
+EXPOSE 5353/udp
+EXPOSE 5355/udp
 EXPOSE 5985
 EXPOSE 6501
 EXPOSE 6666
