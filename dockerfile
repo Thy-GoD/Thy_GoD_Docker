@@ -54,13 +54,11 @@ RUN apt-get update && apt-get install -y \
     golang \
     feh \
     freerdp2-x11 \
-    neo4j \
     lua5.4\
     httprobe \
     awscli \
     burpsuite \
     villain \
-    bloodhound \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -202,7 +200,7 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     
 # Installs Bloodhound + SharpHound
-# Update: Bloodhound no longer needs to be installed manually, hence I will be reverting to apt instead.
+# Update: Bloodhound has been deprecated and moved on to being containerized, see README for more info.
 # Additionally, due to a bug with SharpHound, it will be installed manually.
 
 RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/SharpHound/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \

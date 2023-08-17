@@ -28,6 +28,16 @@ FYI, run `xhost +local:$(id -nu)` to allow your container to use the host's disp
 
 Note that this is automatically done in the tools script, but I have not tested if it works all the time.
 
+With Bloodhound's new updated push to using a Dockerized system instead, I've opted to pre-configure <br>
+a docker-compose.yml file from their directory, to work in conjunction with this container.
+
+Therefore, all you have to do is just run `docker-compose up` (`docker-compose down -v` to remove the containers.)<br>
+in the new /Bloodhound directory.
+
+Sharphound will still be available within the container itself.
+
+This is subject to change as Bloodhound Community Edition is still being developed and it's new.
+
 ## Note: 
 
 I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
@@ -36,10 +46,12 @@ Please give the dockerfile and Tools.sh a read as there is alot of customization
 
 ## TODO List:
 
-Add more features and constant bug fixes/updates to functionality.
-Add images and screenshots to make people actually want to use this lmao.
-Somehow find a way to magically make IPV6 DNS Takeover Attacks work.
-Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers.
+Add more features and constant bug fixes/updates to functionality. <br>
+Add images and screenshots to make people actually want to use this lmao. <br>
+Somehow find a way to magically make IPV6 DNS Takeover Attacks work. <br>
+Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers. <br>
+Nevermind again, it doesn't work and completely broke, I'll be using the updated Bloodhound-Docker. <br>
+Which i've configured such that all you need to do is go to the /Bloodhound directory and run docker-compose up. <br>
 My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
 while maintaining all my configurations and tools for pentesting.
 
