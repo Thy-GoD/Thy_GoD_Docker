@@ -59,6 +59,7 @@ RUN apt-get update && apt-get install -y \
     awscli \
     burpsuite \
     villain \
+    subfinder \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -118,6 +119,10 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
     
 # Cargo Installations
 # Installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
+# xh: Curl replacement
+# Ouch: unzip replacement 
+# atuin: Terminal History replacement
+# cargo-update: makes updating easier, use cargo-update all
 
 RUN cargo install xh && \
     cargo install ouch && \
@@ -190,15 +195,22 @@ RUN git clone https://github.com/aniqfakhrul/powerview.py.git ~/Tools/powerview.
 # You will need to move the tool to the shared folder in order to use it.
 # Ofc if you run --network=host, this could be used from within the container itself.
 # If I find a way to make it work without --network=host, I will update it.
+# Good news, I managed to get both LLMNR and DHCPv6 working from a docker container.
+# This tool is now disabled in favor of Inveigh
 
-RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Tools/pretender && \
-    go build -C ~/Tools/pretender/ -ldflags '-X main.vendorInterface=eth0'
+# RUN git clone https://github.com/RedTeamPentesting/pretender.git ~/Tools/pretender && \
+# go build -C ~/Tools/pretender/ -ldflags '-X main.vendorInterface=eth0'
     
 # Install NeoVim plugin manager.
 
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    
+
+# Installs Bearer for code analysis.
+RUN apt-get install apt-transport-https && \
+    echo "deb [trusted=yes] https://apt.fury.io/bearer/ /" > /etc/apt/sources.list.d/fury.list && \
+    apt-get update && apt-get install bearer
+
 # Installs Bloodhound + SharpHound
 # Update: Bloodhound has been deprecated and moved on to being containerized, see README for more info.
 # Additionally, due to a bug with SharpHound, it will be installed manually.
@@ -261,6 +273,29 @@ RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/t
     echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
     sudo apt update && sudo apt upgrade && sudo apt install ngrok
 
+# Installs Inveigh.exe and Inveigh (Linux). 
+# This lets you run responder on both windows (post-compromise and on this container.)
+# Please look at the README.md for instructions on how to enable multicast forwarding.
+
+RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \
+    latest="${latest/tag/download}" && \
+    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
+    download_link="https://github.com/Kevin-Robertson/Inveigh/releases/download/${latest}/Inveigh-net7.0-win-x64-nativeaot-${version}.zip" && \
+    wget -O Inveigh.zip "$download_link" && \                                                         
+    unzip Inveigh.zip -d ~/Payloads/ && \
+    rm Inveigh.zip
+
+
+RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \   
+    latest="${latest/tag/download}" && \
+    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
+    download_link="https://github.com/Kevin-Robertson/Inveigh/releases/download/${latest}/Inveigh-net7.0-linux-x64-trimmed-single-${version}.tar.gz" && \ 
+    wget -O Inveigh.tar.gz "$download_link" && \   
+    ouch decompress Inveigh.tar.gz --dir ~/Tools && \   
+    rm Inveigh.tar.gz && \
+    chmod 777 ~/Tools/Inveigh/inveigh
+
+
 # Install Tools and Open Planned Ports
 # FYI Impacket is installed twice as a fallback measure.
 
@@ -283,7 +318,6 @@ RUN apt-get update && apt-get install -y \
     wpscan \
     nikto \
     dnsutils \
-    responder \
     amass \
     evil-winrm \
     crackmapexec \
@@ -311,6 +345,8 @@ RUN apt-get update && apt-get install -y \
     certipy-ad \
     gpp-decrypt \
     peass \
+    kpcli \
+    putty-tools \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -337,20 +373,35 @@ RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
 
 # Signifies Ports to be Used. 
 # Most are tool/service related or misc.
-# UDP ones exist cuz of Responder.
+# UDP ones exist cuz of Responder/LLMNR attacks.
 
 EXPOSE 21
 EXPOSE 22
+EXPOSE 25
 EXPOSE 53
+EXPOSE 53/udp
 EXPOSE 80
 EXPOSE 88
+EXPOSE 110
+EXPOSE 135
 EXPOSE 137/udp
 EXPOSE 138/udp
+EXPOSE 139
 EXPOSE 389
+EXPOSE 389/udp
 EXPOSE 443
 EXPOSE 445
+EXPOSE 546
+EXPOSE 546/udp
+EXPOSE 547
+EXPOSE 547/udp
+EXPOSE 587 
 EXPOSE 636 
 EXPOSE 1180
+EXPOSE 1433
+EXPOSE 1434/udp
+EXPOSE 3141
+EXPOSE 3128
 EXPOSE 4443
 EXPOSE 5353/udp
 EXPOSE 5355/udp
@@ -358,8 +409,6 @@ EXPOSE 5985
 EXPOSE 6501
 EXPOSE 6666
 EXPOSE 6969
-EXPOSE 7474
-EXPOSE 7687
 EXPOSE 8000
 EXPOSE 8081
 EXPOSE 8080

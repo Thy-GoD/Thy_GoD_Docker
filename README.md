@@ -49,9 +49,18 @@ Please give the dockerfile and Tools.sh a read as there is alot of customization
 Add more features and constant bug fixes/updates to functionality. <br>
 Add images and screenshots to make people actually want to use this lmao. <br>
 Somehow find a way to magically make IPV6 DNS Takeover Attacks work. <br>
+
+Update on IPV6:
+
+Alright, I've tried to setup ipv6 on my docker container for ages and it's just never working.
+If any of you reading this bother to help me, it's be wonderful.
+What I've discovered is that dhcpv6 does not work at all, and pretender doesn't work while <br>
+inside a docker container for god knows what reason.
+
 Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers. <br>
 Nevermind again, it doesn't work and completely broke, I'll be using the updated Bloodhound-Docker. <br>
-Which i've configured such that all you need to do is go to the /Bloodhound directory and run docker-compose up. <br>
+Which I've configured such that all you need to do is go to the /Bloodhound directory and run docker-compose up. <br>
+
 My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
 while maintaining all my configurations and tools for pentesting.
 

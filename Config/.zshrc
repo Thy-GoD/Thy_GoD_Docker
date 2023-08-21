@@ -261,9 +261,10 @@ fi
 source ~/.cargo/env
 export PATH="${HOME}/.local/bin:/home/Thy_GoD/.local/bin:${PATH}"
 export PATH="/usr/games:${PATH}"
-export PATH="${HOME}/Tools/Villain:${PATH}"
+#export PATH="${HOME}/Tools/Villain:${PATH}" Villain is no longer manually built, remove this is if need be.
 export GOPATH="${HOME}/.go"
 export DISPLAY=":0.0"
+export PATH="${HOME}/.go/bin:${PATH}"
 
 bash ~/.login_text
 
@@ -312,9 +313,11 @@ if  ! [[ $(ip link show dev ligolo up &>/dev/null) ]]; then
 fi
 
 # Moves Pretender to Shared Folder. (P smart right?!)
-Shared_Dir="${HOME}/Shared_Folder"
-Tools_Dir="${HOME}/Tools" 
+# Shared_Dir="${HOME}/Shared_Folder"
+# Tools_Dir="${HOME}/Tools" 
 
-if [[ -d "${Tools_Dir}/pretender" ]]; then
-    mv "${Tools_Dir}/pretender" "${Shared_Dir}"
-fi
+# if [[ -d "${Tools_Dir}/pretender" ]]; then
+#     mv "${Tools_Dir}/pretender" "${Shared_Dir}"
+# fi
+# Lmao as smart as this was, Pretender is no longer needed as Inveigh does the job of both Pretender, 
+# Responder and MITM6, plus it works on windows.
