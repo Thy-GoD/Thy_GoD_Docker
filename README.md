@@ -50,12 +50,27 @@ Add more features and constant bug fixes/updates to functionality. <br>
 Add images and screenshots to make people actually want to use this lmao. <br>
 Somehow find a way to magically make IPV6 DNS Takeover Attacks work. <br>
 
-Update on IPV6:
+**Update on IPv6**:
 
 Alright, I've tried to setup ipv6 on my docker container for ages and it's just never working.
 If any of you reading this bother to help me, it's be wonderful.
 What I've discovered is that dhcpv6 does not work at all, and pretender doesn't work while <br>
 inside a docker container for god knows what reason.
+
+**Update 2 on IPv6**:
+
+Good news! Turns out I wasn't crazy and the main problem was that docker by nature does not forward<br>
+multicast traffic, what does this mean? LLMNR and DHCPv6 rely on multicast, hence they don't work.
+My solution was found when I stumbled upon a github issue thread on moby (docker networking)<br>
+that explained a way to use smcroute to forward multicast traffic to the docker0 interface.
+
+Lo and Behold! IT WORKS! Well, problem is that you'd have to run the commands as root.
+Now due to security concerns, I'd recommend checking the Tools script out first, but if you trust me,<br>
+run the tools command with a `autoroute` argument, like `sudo bash Tools.sh autoroute`.
+
+The name of my tools script is longer, but you get what I mean.
+
+FYI, you also have to change the spoofer ip(ipv6) to your host's so that it gets forwarded to the container.
 
 Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers. <br>
 Nevermind again, it doesn't work and completely broke, I'll be using the updated Bloodhound-Docker. <br>
