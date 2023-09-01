@@ -263,8 +263,9 @@ export PATH="${HOME}/.local/bin:/home/Thy_GoD/.local/bin:${PATH}"
 export PATH="/usr/games:${PATH}"
 #export PATH="${HOME}/Tools/Villain:${PATH}" Villain is no longer manually built, remove this is if need be.
 export GOPATH="${HOME}/.go"
+export GOROOT="/usr/lib/go"
+export PATH="$GOPATH/bin:/usr/lib/go/bin:${PATH}"
 export DISPLAY=":0.0"
-export PATH="${HOME}/.go/bin:${PATH}"
 
 bash ~/.login_text
 

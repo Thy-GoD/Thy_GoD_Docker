@@ -11,10 +11,12 @@ Feel free to use this to make your own docker projects or whatever.
 ## How to use:
 
 I've made it quite easy, simply run the tools.sh file, **(as root if any conflicts occur somehow.)**.
-
+ 
 This obviously requires docker installed.
 
-This will start to build the docker image, once it's done it'll put you inside the container.
+I also recommend running the `docker` argument of my script (see `--help` for more info.), to automatically add your user into the docker group.
+
+The script will then start to build the docker image, once it's done it'll put you inside the container.
 
 You can make this container as a *terminal* by creating a shortcut that runs the tools.sh file.
 
@@ -26,17 +28,19 @@ I have added a custom tmux configuration that uses Ctrl + A as the entry command
 
 FYI, run `xhost +local:$(id -nu)` to allow your container to use the host's display.
 
-Note that this is automatically done in the tools script, but I have not tested if it works all the time.
+Note that this is automatically done in the tools script, but I have not tested if it works all the time. (You may have to install xhost too.)
 
 With Bloodhound's new updated push to using a Dockerized system instead, I've opted to pre-configure <br>
 a docker-compose.yml file from their directory, to work in conjunction with this container.
 
 Therefore, all you have to do is just run `docker-compose up` (`docker-compose down -v` to remove the containers.)<br>
-in the new /Bloodhound directory.
+in the new `/Bloodhound` directory.
 
 Sharphound will still be available within the container itself.
 
 This is subject to change as Bloodhound Community Edition is still being developed and it's new.
+
+Do take note that Bloodhound's web interface's port is on port 1234, so make sure it's available.
 
 ## Note: 
 
@@ -52,13 +56,6 @@ Somehow find a way to magically make IPV6 DNS Takeover Attacks work. <br>
 
 **Update on IPv6**:
 
-Alright, I've tried to setup ipv6 on my docker container for ages and it's just never working.
-If any of you reading this bother to help me, it's be wonderful.
-What I've discovered is that dhcpv6 does not work at all, and pretender doesn't work while <br>
-inside a docker container for god knows what reason.
-
-**Update 2 on IPv6**:
-
 Good news! Turns out I wasn't crazy and the main problem was that docker by nature does not forward<br>
 multicast traffic, what does this mean? LLMNR and DHCPv6 rely on multicast, hence they don't work.
 My solution was found when I stumbled upon a github issue thread on moby (docker networking)<br>
@@ -66,15 +63,9 @@ that explained a way to use smcroute to forward multicast traffic to the docker0
 
 Lo and Behold! IT WORKS! Well, problem is that you'd have to run the commands as root.
 Now due to security concerns, I'd recommend checking the Tools script out first, but if you trust me,<br>
-run the tools command with a `autoroute` argument, like `sudo bash Tools.sh autoroute`.
-
-The name of my tools script is longer, but you get what I mean.
+run the tools script with a `autoroute` argument, like `sudo bash Tools.sh autoroute`.
 
 FYI, you also have to change the spoofer ip(ipv6) to your host's so that it gets forwarded to the container.
-
-Nevermind abt the bloodhound thing, I managed to get it to work within docker itself, poggers. <br>
-Nevermind again, it doesn't work and completely broke, I'll be using the updated Bloodhound-Docker. <br>
-Which I've configured such that all you need to do is go to the /Bloodhound directory and run docker-compose up. <br>
 
 My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
 while maintaining all my configurations and tools for pentesting.

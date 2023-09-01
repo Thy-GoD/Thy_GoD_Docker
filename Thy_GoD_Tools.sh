@@ -30,7 +30,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SHARED_FOLDER_PATH="$SCRIPT_DIR/Shared_Folder"
 CONFIG_FOLDER_PATH="$SCRIPT_DIR/Config"
 
-# Sets the font directory.
+# Sets the font directory, you can change it if it doesn't work.
 font_dir="${HOME}/.local/share/fonts"
 
 # Finds Host's IP Address
@@ -43,18 +43,46 @@ if [[ ! $(xhost) =~ "LOCAL:" ]]; then
     xhost +local:$(id -nu)
 fi
 
+# Help Commands Page.
+
+if [[ $1 = "-h"  ]] || [[ $1 = "--help" ]] || [[ $1 = "help" ]] || [[ $1 = "-help" ]]; then
+  echo ""
+  echo -e "                   Welcome to the help page, some of these commands must be run as root.\n"
+  echo "                    I recommend running the first command as it's just more convenient."
+  echo "        The 2nd command if you want to use the container without host networking, and the 3rd if you do."
+  echo "-----------------------------------------------------------------------------------------------------------"
+  echo ""
+  echo "Usage: ./Thy_GoD_Tools.sh *insert command here*"
+  echo -e "Without any commands, it will either setup the container, or spawn a terminal into it.\n"
+  echo "Command: docker (Requires running as root.)"
+  echo "This command automatically places your current user into the docker group, so that you won't"
+  echo -e "need to run this script with sudo/as root each time you want to enter the container.\n"
+  echo "Command: autoroute (Requires running as root.)"
+  echo "This command sets up smcroute + enables ipv6 for docker, so that LLMNR and DHCPv6 can work."
+  echo -e "It is recommended to read the command's comments or create an issue thread if you face any issues.\n"
+  echo "Command: host (Has to be run BEFORE creating the container.)"
+  echo "This command runs the docker container with --network=host. "
+  echo "You would not need to run autoroute as the docker container would use the host's network instead."
+  echo -e "This is recommended for actual pentests so that you won't need to bother configuring smcroute.\n"
+  echo "However, do take note that ALL ports in the docker container will be exposed as it is,"
+  echo -e "essentially using the host's networking stack. (Make sure not to leave open services or ports.)\n"
+  echo ""
+  echo "Created By Thigh GoD"
+  exit 0
+fi
+
 # As I want this script to be run-able without root, 
 # you will have to run this command as root in order to automatically enable Multicast traffic forwarding.
 # This will install smcroute, configure it, then setup docker's daemon for ipv6.
 
-if [[ $1 = "autoroute" ]]; then
+if [[ $1 = "autoroute" ]] || [[ $1 = "--autoroute" ]] || [[ $1 = "-autoroute" ]]; then
 	if [[ $EUID -eq 0 ]]; then
 		if  ! which smcroute >/dev/null 2>&1 ;then
-			apt update && apt install smcroute
+			apt update && apt install smcroute -y
 			cp "$CONFIG_FOLDER_PATH/smcroute.conf" /etc/
 			systemctl enable smcroute
 			clear
-			echo "smcroute has been configured!"
+			echo "Smcroute has been configured!"
 			echo "If this didn't work, likely smcroute doesn't exist in ur sources list."
 			echo "Now setting up ipv6 for docker."
 			echo "--------------------------------"
@@ -65,16 +93,48 @@ if [[ $1 = "autoroute" ]]; then
 			echo "If this didn't work, it's likely due to the service command not existing."
 			exit
 		else
-			echo "smcroute already exists, either uninstall it, or manually move the smcroute configuration"
-			echo "from the Config folder to /etc/smcroute.conf, I recommend using cp instead of mv."
-			exit
+			echo "Smcroute already exists, either uninstall it and re-run the script, or manually move the smcroute configuration."
+			echo "To do so, move /Config/smcroute.conf to /etc/smcroute.conf, I recommend using cp instead of mv."
+			exit 0
 		fi
 	else
-		echo "This command must be run as root."
-		exit
+		echo "This command must be run as root!"
+		exit 0
 	fi 
 fi
 
+# To make life easier, I've also added a command to automatically add the user to the docker group.
+# This way, you won't need to run docker with sudo each time. 
+# However, do take note of the possible security concerns over this. 
+# In most cases it would not matter, however it is not possible to run this script as root all the time.
+# Which means that running it as a terminal/shortcut would not be possible, if you wish to go with the safer but less convenient route.
+
+if [[ $1 = "docker" ]] || [[ $1 = "--docker" ]] || [[ $1 = "-docker" ]]; then
+        if [[ $EUID -eq 0 ]]; then
+		if ! which docker >/dev/null 2>&1 ; then
+			echo "Docker has not been installed, attempting to install....."
+			apt update && apt install docker.io -y
+			echo "Installation succeeded, continuing with setup."
+		fi
+
+		if [[ $(id | grep "docker") ]];then
+			echo "User has already been added to the docker group."
+			exit 0
+		else
+			if ! grep -q "^docker:" /etc/group; then
+				groupadd docker
+			fi
+			usermod -aG docker $USER
+			newgrp docker
+			echo "User successfully added to docker group, please re-login/reboot just in case."
+			echo "Also, do check if you are indeed able to run docker without using root/sudo."
+			exit
+		fi
+	else
+		echo "This command must be run as root!"
+		exit 0
+	fi
+fi
 
 # Check if the container is already running.
 if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
@@ -140,7 +200,8 @@ else
     echo "or this OS/Distro isnt supported."
     echo ""
 
-    if [[ $1 = "host" ]]; then
+    if [[ $1 = "host" ]] || [[ $1 = "-host" ]] || [[ $1 = "--host" ]]; then
+	    echo "This container has been created with Host Networking"
 	    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal --device /dev/net/tun:/dev/net/tun -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder -v \
 	    /tmp/.X11-unix:/tmp/.X11-unix --shm-size=1g -e DISPLAY=$DISPLAY --name $CONTAINER_NAME $IMAGE_NAME zsh
     else    

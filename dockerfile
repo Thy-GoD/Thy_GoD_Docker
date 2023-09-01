@@ -6,6 +6,7 @@ FROM kalilinux/kali-rolling
 # Change the HOME variable if you wish to default to a non-root user.
 # Change the HOME variable in the Tools.sh too.
 # Change the EDITOR variable if you wish to use an alternative editor.
+# Change the TZ variable if you're not in Singapore (Very Likely).
 
 ENV USER_ALT=Thy_GoD
 ENV TERM=xterm-256color
@@ -55,11 +56,10 @@ RUN apt-get update && apt-get install -y \
     feh \
     freerdp2-x11 \
     lua5.4\
-    httprobe \
     awscli \
     burpsuite \
     villain \
-    subfinder \
+    sqlmap \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -118,14 +118,13 @@ RUN apt-get update && apt-get install -y \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
     
 # Cargo Installations
-# Installs Xh, Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
-# xh: Curl replacement
+# Installs Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
 # Ouch: unzip replacement 
 # atuin: Terminal History replacement
 # cargo-update: makes updating easier, use cargo-update all
+# Removed xh installation as I've never needed to use it.
 
-RUN cargo install xh && \
-    cargo install ouch && \
+RUN cargo install ouch && \
     cargo install atuin && \
     cargo install cargo-update && \
     cargo install --features=ssl websocat
@@ -142,7 +141,8 @@ RUN cargo install xh && \
 RUN mkdir ~/Wordlists && \
     mkdir ~/Tools && \
     mkdir ~/Tools/DIY_Tools && \
-    mkdir ~/Notes
+    mkdir ~/Notes && \
+    mkdir ~/Tools/Reconftw_Tools
     
 # Vulscan
 
@@ -245,9 +245,6 @@ RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
     GOOS=windows go build -o ligolo-proxy.exe -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
     GOOS=windows go build -o ligolo-agent.exe -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
 
-# Installs Waybackurls (Very simple installation, I'm putting this here since ik go has been working properly.)
-
-RUN go install github.com/tomnomnom/waybackurls@latest
 
 # Installs Pass The Cert, this is as sometimes certipy will break/stop working.
 
@@ -296,6 +293,24 @@ RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/lat
     chmod 777 ~/Tools/Inveigh/inveigh
 
 
+# Installs Waybackurls (Very simple installation, I'm putting this here since ik go has been working properly.)
+
+RUN go install github.com/tomnomnom/waybackurls@latest
+
+# Installs ffuf
+
+RUN go install github.com/ffuf/ffuf/v2@latest
+
+# Reconftw Installation (Won't be installed during the docker run process.)
+# I recommend you to run Reconftw as it installs and configures a bunch of useful
+# Web, OSINT, Enumeration (Nuclei, Subdomains, etc.)
+# FYI nuclei-templates will be installed in the home directory due to a hardcoded
+# line in Reconftw, I've submitted an issue and will fix it whenever possible.
+
+RUN git clone https://github.com/six2dez/reconftw ~/Tools/reconftw
+
+COPY Config/reconftw.cfg ${HOME}/Tools/reconftw/reconftw.cfg
+
 # Install Tools and Open Planned Ports
 # FYI Impacket is installed twice as a fallback measure.
 
@@ -309,7 +324,6 @@ RUN apt-get update && apt-get install -y \
     tcpdump \
     nmap \
     smbmap \
-    sqlmap \
     john \
     socat \
     hydra \
@@ -318,11 +332,9 @@ RUN apt-get update && apt-get install -y \
     wpscan \
     nikto \
     dnsutils \
-    amass \
     evil-winrm \
     crackmapexec \
     enum4linux \
-    whois \
     w3m \
     jq \
     libncurses5-dev \
@@ -331,7 +343,6 @@ RUN apt-get update && apt-get install -y \
     hashid \
     man-db \
     mitmproxy \
-    ffuf \
     crunch \
     tmux \
     ftp \
@@ -369,6 +380,29 @@ RUN nvim --headless +PlugInstall +qall 1>/dev/null
 # Sets Execute Perms on offering script.
     
 RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
+
+# I will be removing the installation of some tools as Reconftw does them for me.
+# I have setup a custom configuration of Reconftw to do just that.
+# However, I will be placing the old installations/configurations here just in case.
+#
+# Apt installations: httprobe,whois,ffuf,subfinder
+#
+#
+# Installs DalFox for XSS.
+#
+#RUN go install github.com/hahwul/dalfox/v2@latest
+#
+# Installs Gospider for BugBounty Purposes
+#
+#RUN go install github.com/jaeles-project/gospider@latest
+#
+# Installs Nuclei for automated scanning.
+#
+#RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+#
+# Installs Arjun for parameter fuzzing.
+#
+#RUN pipx install arjun
 
 
 # Signifies Ports to be Used. 
