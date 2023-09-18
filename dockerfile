@@ -27,7 +27,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     apt-utils \
     iproute2 \
-    build-essential
+    build-essential \
+    libkrb5-dev \
+    chromium
 
 # Switch shell to zsh.
 
@@ -60,6 +62,7 @@ RUN apt-get update && apt-get install -y \
     burpsuite \
     villain \
     sqlmap \
+    faketime \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -122,12 +125,14 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # Ouch: unzip replacement 
 # atuin: Terminal History replacement
 # cargo-update: makes updating easier, use cargo-update all
+# rustcat: allows automatic dumb shell upgrades.
 # Removed xh installation as I've never needed to use it.
 
 RUN cargo install ouch && \
     cargo install atuin && \
     cargo install cargo-update && \
-    cargo install --features=ssl websocat
+    cargo install --features=ssl websocat && \
+    cargo install rustcat
 
 # Wordlists & Tools/Scripts
 # Seclists will be the main wordlist, but you can add more here.
@@ -209,19 +214,17 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
 # Installs Bearer for code analysis.
 RUN apt-get install apt-transport-https && \
     echo "deb [trusted=yes] https://apt.fury.io/bearer/ /" > /etc/apt/sources.list.d/fury.list && \
-    apt-get update && apt-get install bearer
+    apt-get update && apt-get install bearer -y
 
-# Installs Bloodhound + SharpHound
-# Update: Bloodhound has been deprecated and moved on to being containerized, see README for more info.
-# Additionally, due to a bug with SharpHound, it will be installed manually.
+# Installs Bloodhound (Update: Python bloodhound and CME's bloodhound module only work with BloodhoundAD, it will be re-added.)
 
-RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/SharpHound/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \
-    latest="${latest/tag/download}" && \
-    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
-    download_link="https://github.com/BloodHoundAD/SharpHound/releases/download/${latest}/SharpHound-${version}.zip" && \
-    wget -O SharpHound.zip "$download_link" && \
-    unzip SharpHound.zip -d ~/Payloads/ && \
-    rm SharpHound.zip
+#RUN latest=$(curl -IL -s https://github.com/BloodHoundAD/SharpHound/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \
+#    latest="${latest/tag/download}" && \
+#    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
+#    download_link="https://github.com/BloodHoundAD/SharpHound/releases/download/${latest}/SharpHound-${version}.zip" && \
+#    wget -O SharpHound.zip "$download_link" && \
+#    unzip SharpHound.zip -d ~/Payloads/ && \
+#    rm SharpHound.zip
 
 # Install jwt-token tool
 
@@ -240,16 +243,16 @@ RUN git clone https://github.com/rarecoil/unwebpack-sourcemap.git ~/Tools/unwebp
 # I really do love this tool, and I'll promote @opcode (https://gitlab.com/0pcode) for helping me out w this tool. <3
 
 RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
-    go build -o ligolo-proxy -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy ~/Tools/ligolo-ng && \
-    go build -o ligolo-agent -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent ~/Tools/ligolo-ng && \
-    GOOS=windows go build -o ligolo-proxy.exe -C ~/Tools/ligolo-ng/cmd/proxy/ && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
-    GOOS=windows go build -o ligolo-agent.exe -C ~/Tools/ligolo-ng/cmd/agent/ && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
-
+    go build -C ~/Tools/ligolo-ng/cmd/proxy/ -o ligolo-proxy && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy ~/Tools/ligolo-ng && \
+    go build -C ~/Tools/ligolo-ng/cmd/agent/ -o ligolo-agent && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent ~/Tools/ligolo-ng && \
+    GOOS=windows go build -C ~/Tools/ligolo-ng/cmd/proxy/ -o ligolo-proxy.exe && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
+    GOOS=windows go build -C ~/Tools/ligolo-ng/cmd/agent/ -o ligolo-agent.exe && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
 
 # Installs Pass The Cert, this is as sometimes certipy will break/stop working.
+# I have removed this installation as SharpCollection includes it's .exe version.
 
-RUN git clone https://github.com/AlmondOffSec/PassTheCert.git ~/Tools/PassTheCert && \
-    chmod 777 ~/Tools/PassTheCert/Python/passthecert.py
+#RUN git clone https://github.com/AlmondOffSec/PassTheCert.git ~/Tools/PassTheCert && \
+#    chmod 777 ~/Tools/PassTheCert/Python/passthecert.py
     
 # Installs username-anarchy, a tool that generates usernames from a list of people's names for you.
 RUN git clone https://github.com/urbanadventurer/username-anarchy.git ~/Tools/username-anarchy && \
@@ -257,12 +260,8 @@ RUN git clone https://github.com/urbanadventurer/username-anarchy.git ~/Tools/us
     
 # Installs ConPtyShell
 
-RUN latest=$(curl -IL -s https://github.com/antonioCoco/ConPtyShell/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
-    latest=$(echo "${latest/tag/download}") && \
-    latest+="/ConPtyShell.zip" && \
-    wget -O ConPtyShell.zip ${latest} && \
-    unzip ConPtyShell.zip -d ~/Payloads/ && \
-    rm ConPtyShell.zip
+RUN wget https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1 && \
+    mv Invoke-ConPtyShell.ps1 ~/Payloads
     
 # Installs Ngrok (Proxy through internet to localhost)
 
@@ -273,15 +272,7 @@ RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/t
 # Installs Inveigh.exe and Inveigh (Linux). 
 # This lets you run responder on both windows (post-compromise and on this container.)
 # Please look at the README.md for instructions on how to enable multicast forwarding.
-
-RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \
-    latest="${latest/tag/download}" && \
-    version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
-    download_link="https://github.com/Kevin-Robertson/Inveigh/releases/download/${latest}/Inveigh-net7.0-win-x64-nativeaot-${version}.zip" && \
-    wget -O Inveigh.zip "$download_link" && \                                                         
-    unzip Inveigh.zip -d ~/Payloads/ && \
-    rm Inveigh.zip
-
+# Inveigh.exe has been removed as it's part of the SharpCollection repo.
 
 RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \   
     latest="${latest/tag/download}" && \
@@ -291,7 +282,6 @@ RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/lat
     ouch decompress Inveigh.tar.gz --dir ~/Tools && \   
     rm Inveigh.tar.gz && \
     chmod 777 ~/Tools/Inveigh/inveigh
-
 
 # Installs Waybackurls (Very simple installation, I'm putting this here since ik go has been working properly.)
 
@@ -306,10 +296,31 @@ RUN go install github.com/ffuf/ffuf/v2@latest
 # Web, OSINT, Enumeration (Nuclei, Subdomains, etc.)
 # FYI nuclei-templates will be installed in the home directory due to a hardcoded
 # line in Reconftw, I've submitted an issue and will fix it whenever possible.
+# Update: Reconftw devs have fixed this issue!
 
 RUN git clone https://github.com/six2dez/reconftw ~/Tools/reconftw
 
 COPY Config/reconftw.cfg ${HOME}/Tools/reconftw/reconftw.cfg
+
+# Installs updated Crackmapexec (God I should've known about this sooner.....)
+
+RUN git clone https://github.com/Porchetta-Industries/CrackMapExec.git ~/Tools/CrackMapExec && \
+    pipx install ~/Tools/CrackMapExec
+
+# Installs enum4linux-ng (I recommend using CME for RID cycling.)
+
+RUN git clone https://github.com/cddmp/enum4linux-ng.git ~/Tools/enum4linux-ng && \
+    pipx install ~/Tools/enum4linux-ng
+
+# Installs SharpCollection's compiled binaries (Certify, Rubeus etc.)
+
+RUN git clone https://github.com/Flangvik/SharpCollection.git ~/Tools/SharpCollection
+
+# Installs targetedKerberoast
+
+RUN git clone https://github.com/ShutdownRepo/targetedKerberoast.git ~/Tools/targetedKerberoast && \
+    pip3 install -r ~/Tools/targetedKerberoast/requirements.txt && \
+    chmod 777 ~/Tools/targetedKerberoast/targetedKerberoast.py
 
 # Install Tools and Open Planned Ports
 # FYI Impacket is installed twice as a fallback measure.
@@ -333,9 +344,6 @@ RUN apt-get update && apt-get install -y \
     nikto \
     dnsutils \
     evil-winrm \
-    crackmapexec \
-    enum4linux \
-    w3m \
     jq \
     libncurses5-dev \
     libncursesw5-dev \
@@ -348,7 +356,6 @@ RUN apt-get update && apt-get install -y \
     ftp \
     webshells \
     wireshark \
-    pwncat \
     ttf-ancient-fonts \
     impacket-scripts \
     python3-impacket \
@@ -358,6 +365,11 @@ RUN apt-get update && apt-get install -y \
     peass \
     kpcli \
     putty-tools \
+    smbclient \
+    python3-ldap3 \
+    python3-yaml \
+    neo4j \
+    bloodhound \
     && rm -rf /var/lib/apt/lists/*
         
 # Does a final update of everything
@@ -403,7 +415,10 @@ RUN chmod 777 /home/$USER_ALT/Vanguard_Worship_Alter/Offering.sh
 # Installs Arjun for parameter fuzzing.
 #
 #RUN pipx install arjun
-
+# 
+# Mimikatz has been removed cuz it's part of the SharpCollection repo. 
+#
+# Bloodhound + Neo4j has been re-added as I realized bloodhound python (or CME's bloodhound option) does not work with Bloodhound CE
 
 # Signifies Ports to be Used. 
 # Most are tool/service related or misc.
