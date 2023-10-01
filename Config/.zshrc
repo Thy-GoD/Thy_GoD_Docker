@@ -321,3 +321,34 @@ fi
 # fi
 # Lmao as smart as this was, Pretender is no longer needed as Inveigh does the job of both Pretender, 
 # Responder and MITM6, plus it works on windows.
+
+# My automatic Linux shell upgrade script.
+# Example Usage:
+# autoshell 'script -qc /bin/bash /dev/null' 6969
+# This will start a reverse shell listener on port 6969 that upon connection,
+# automatically upgrades from a Dumb shell into a functional one.
+# Btw, the script method is the default one, as it relies on no additional installations.
+# Special thanks to Opera GX's ChatGPT clone.
+
+autoshell() {
+    if [[ $# -eq 1 ]]; then
+        command="script -qc bash /dev/null"
+        port="$1"
+    elif [[ $# -eq 2 ]]; then
+        command="$1"
+        port=$2
+    else
+        echo "Invalid number of arguments."
+        echo "Please give either a port number or a command and port number"
+        return 1
+    fi
+
+    # Escape quotes in the command variable
+    escaped_command=$(printf "%q" "$command")
+
+    full_command="stty raw -echo; (stty size; cat) | rcat l -ie $escaped_command $port && reset"
+    #For debugging only.
+    #echo "$full_command"
+    
+    eval "$full_command"
+}

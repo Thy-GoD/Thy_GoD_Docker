@@ -58,7 +58,6 @@ RUN apt-get update && apt-get install -y \
     feh \
     freerdp2-x11 \
     lua5.4\
-    awscli \
     burpsuite \
     villain \
     sqlmap \
@@ -321,6 +320,18 @@ RUN git clone https://github.com/Flangvik/SharpCollection.git ~/Tools/SharpColle
 RUN git clone https://github.com/ShutdownRepo/targetedKerberoast.git ~/Tools/targetedKerberoast && \
     pip3 install -r ~/Tools/targetedKerberoast/requirements.txt && \
     chmod 777 ~/Tools/targetedKerberoast/targetedKerberoast.py
+
+# Installs NoSQLI Injector
+
+RUN go install github.com/Charlie-belmer/nosqli@latest
+
+# Installs AWS Cli
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm awscliv2.zip && \
+    mv aws .aws
 
 # Install Tools and Open Planned Ports
 # FYI Impacket is installed twice as a fallback measure.
