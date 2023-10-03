@@ -261,6 +261,18 @@ RUN git clone https://github.com/urbanadventurer/username-anarchy.git ~/Tools/us
 
 RUN wget https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1 && \
     mv Invoke-ConPtyShell.ps1 ~/Payloads
+
+# Installs FullPowers
+
+RUN wget https://github.com/itm4n/FullPowers/releases/download/v0.1/FullPowers.exe && \
+    mv FullPowers.exe ~/Payloads/PoC
+
+# Installs GodPotato
+
+RUN latest_release=$(curl -s "https://api.github.com/repos/BeichenDream/GodPotato/releases/latest" | grep -o '"tag_name": ".*"' | cut -d'"' -f4) && \
+    download_url="https://github.com/BeichenDream/GodPotato/releases/download/$latest_release/GodPotato-NET4.exe" && \
+    wget -O "GodPotato.exe" "$download_url" && \
+    mv GodPotato.exe ~/Payloads/PoC
     
 # Installs Ngrok (Proxy through internet to localhost)
 
