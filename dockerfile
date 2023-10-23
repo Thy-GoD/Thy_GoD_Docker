@@ -323,6 +323,11 @@ RUN git clone https://github.com/Porchetta-Industries/CrackMapExec.git ~/Tools/C
 RUN git clone https://github.com/cddmp/enum4linux-ng.git ~/Tools/enum4linux-ng && \
     pipx install ~/Tools/enum4linux-ng
 
+# Installs Pwncat-cs, which is a C2 tool,
+# It does have auto-privesc functionality so beware if you're using this tool for OSCP.
+
+RUN pipx install pwncat-cs
+
 # Installs SharpCollection's compiled binaries (Certify, Rubeus etc.)
 
 RUN git clone https://github.com/Flangvik/SharpCollection.git ~/Tools/SharpCollection
@@ -475,6 +480,7 @@ EXPOSE 1434/udp
 EXPOSE 3141
 EXPOSE 3128
 EXPOSE 4443
+EXPOSE 4444
 EXPOSE 5353/udp
 EXPOSE 5355/udp
 EXPOSE 5985
