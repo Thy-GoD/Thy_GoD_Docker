@@ -247,6 +247,16 @@ RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
     GOOS=windows go build -C ~/Tools/ligolo-ng/cmd/proxy/ -o ligolo-proxy.exe && mv ~/Tools/ligolo-ng/cmd/proxy/ligolo-proxy.exe ~/Tools/ligolo-ng && \
     GOOS=windows go build -C ~/Tools/ligolo-ng/cmd/agent/ -o ligolo-agent.exe && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
 
+# Installs Chisel (ligolo-ng does not have local port forwarding....somehow.)
+
+RUN curl https://i.jpillora.com/chisel! | bash && \
+    latest_release=$(curl -s "https://api.github.com/repos/jpillora/chisel/releases/latest" | grep -oP '"tag_name": "\K(.*?)(?=")') && \
+    file_name="chisel_${latest_release#v}_windows_amd64.gz" && \
+    download_url="https://github.com/jpillora/chisel/releases/download/$latest_release/${file_name}" && \
+    wget -O "chisel.exe.gz" "${download_url}" && \
+    gunzip "chisel.exe.gz" && \
+    mv "chisel.exe" ~/Payloads
+
 # Installs Pass The Cert, this is as sometimes certipy will break/stop working.
 # I have removed this installation as SharpCollection includes it's .exe version.
 
