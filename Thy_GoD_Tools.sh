@@ -36,6 +36,9 @@ font_dir="${HOME}/.local/share/fonts"
 # Finds Host's IP Address
 HOST_IP=$(hostname -I | awk '{print $1}') 
 
+# Sets max attempts to re-try building container.
+max_attempts=5
+
 # Initializes Host Access to Display
 # Check if the user is already in the access control list
 if [[ ! $(xhost) =~ "LOCAL:" ]]; then
@@ -182,8 +185,25 @@ else
 
     clear
     
-    # Build the image
-    docker build -t $IMAGE_NAME $DOCKERFILE_PATH
+    # Build the image (Will re-try 5 times due to rare network issues)
+    attempts=0
+
+    while [ $attempts -lt $max_attempts ]; do
+	    docker build -t $IMAGE_NAME $DOCKERFILE_PATH
+	    
+	    if [ $? -eq 0 ]; then
+		    break
+	    else
+		    echo "Container failed to build. Retrying..."
+		    ((attempts++))
+		    sleep 1
+	    fi
+    done
+
+    if [ $attempts -eq $max_attempts ]; then
+	    echo "Container failed to build and max re-tries reached, try again or submit an issue thread."
+	    exit 0
+    fi
     
     # Run the container
     clear
@@ -198,6 +218,7 @@ else
     echo "4. You setup and run the smcroute configuration by yourself manually, I have included the needed smcroute.conf in the Config folder."
     echo "If you are seeing this message while the container isn't creating, either my script is fucked, ur doing it wrong,"
     echo "or this OS/Distro isnt supported."
+    echo "It's possible for a network error to break the building process too, just rerun the script."
     echo ""
 
     if [[ $1 = "host" ]] || [[ $1 = "-host" ]] || [[ $1 = "--host" ]]; then

@@ -12,8 +12,8 @@ ENV USER_ALT=Thy_GoD
 ENV TERM=xterm-256color
 ENV SHELL=/bin/zsh
 ENV HOME=/root
-ENV PATH="${PATH}:${HOME}/.cargo/bin"
-ENV EDITOR=/usr/bin/nvim
+ENV PATH="${HOME}/.local/share/nvim/bin:${PATH}:${HOME}/.cargo/bin"
+ENV EDITOR="${HOME}/.local/share/nvim/bin/nvim"
 ENV TZ="Asia/Singapore"
 ENV GOPATH="${HOME}/.go"
 
@@ -70,7 +70,7 @@ RUN sudo apt-get update && apt-get upgrade -y
 RUN sudo apt-get autoremove
 
 # Installs Glow (Yeah I know, weird spot to put this.)
-RUN curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
+RUN curl --retry-all-errors --retry 5 -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list && \
     sudo apt-get update && apt-get install -y glow
     
@@ -96,7 +96,7 @@ RUN useradd -m -G sudo -s /bin/zsh "$USER_ALT" \
   
 RUN mkdir /home/$USER_ALT/Vanguard_Worship_Alter && \
     mkdir /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics && \
-    wget -P /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics \
+    wget --user-agent Chrome -P /home/$USER_ALT/Vanguard_Worship_Alter/Vanguard_Pics \
     https://cdn.donmai.us/sample/e9/75/__vanguard_and_vanguard_azur_lane_drawn_by_rock_lee7__sample-e9759b863a4c40aa3abc1428ffbe1fd9.jpg \
     https://cdn.donmai.us/sample/30/1a/__vanguard_and_vanguard_azur_lane_drawn_by_osatou_soul_of_sugar__sample-301a1a9ae09f6f158df56148c824c8ae.jpg \
     https://cdn.donmai.us/sample/21/ed/__vanguard_and_vanguard_azur_lane_drawn_by_junineu__sample-21ede8c155226916ee217a2f0a8a1e69.jpg \
@@ -108,16 +108,9 @@ RUN mkdir /home/$USER_ALT/Vanguard_Worship_Alter && \
 
 RUN mkdir ~/Shared_Folder
 
-# Install neovim (Yes I made a whole section just for Neovim lmao)
-# Batcat has been removed in favor of neovim.
-
-RUN apt-get update && apt-get install -y \
-    neovim \
-    && rm -rf /var/lib/apt/lists/*
-
 # Starts setting up rust and crates.io
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+RUN curl --retry-all-errors --retry 5 https://sh.rustup.rs -sSf | sh -s -- -y
     
 # Cargo Installations
 # Installs Ouch, Atuin,Cargo Updating Tool and Websocat, then binds atuin to zshrc.
@@ -126,6 +119,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # cargo-update: makes updating easier, use cargo-update all
 # rustcat: allows automatic dumb shell upgrades.
 # Removed xh installation as I've never needed to use it.
+# P.S rust in Docker containers r kinda buggy, you'll need to uninstall and re-install the toolchain if you want to update it.
 
 RUN cargo install ouch && \
     cargo install atuin && \
@@ -146,7 +140,7 @@ RUN mkdir ~/Wordlists && \
     mkdir ~/Tools && \
     mkdir ~/Tools/DIY_Tools && \
     mkdir ~/Notes && \
-    mkdir ~/Tools/Reconftw_Tools
+    mkdir ~/Tools/reconftw_tools
     
 # Vulscan
 
@@ -162,7 +156,7 @@ RUN mkdir ~/Payloads && mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
 # Linpeas/Winpeas has been removed as a default tool due to peass package.
 # Change chmod value if you wish to use different perm values.
 
-RUN latest=$(curl -IL -s https://github.com/DominicBreuker/pspy/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
+RUN latest=$(curl --retry-all-errors --retry 5 -IL -s https://github.com/DominicBreuker/pspy/releases/latest | sed -n /location:/p | cut -d ' ' -f 2 | tr -d '\r\n') && \
     latest=$(echo "${latest/tag/download}") && \
     latest+="/pspy64" && \
     wget -O pspy64 ${latest} && \
@@ -170,6 +164,18 @@ RUN latest=$(curl -IL -s https://github.com/DominicBreuker/pspy/releases/latest 
     chmod 777 ~/Payloads/pspy64
 
 # Removed impacket installation as it was not needed.
+
+# Install neovim (Yes I made a whole section just for Neovim lmao)
+# Batcat has been removed in favor of neovim.
+# Update: Debian package does not have the updated neovim version, 
+# I have changed the installation method to obtain from repo release.
+
+RUN latest_release=$(curl --retry-all-errors --retry 5 -s "https://api.github.com/repos/neovim/neovim/releases/latest" | grep -oP '"tag_name": "\K(.*?)(?=")') && \
+    file_name="nvim-linux64.tar.gz" && \
+    download_url="https://github.com/neovim/neovim/releases/download/$latest_release/${file_name}" && \
+    wget -O "nvim.tar.gz" "${download_url}" && \
+    ouch decompress "nvim.tar.gz" && \
+    rm "nvim.tar.gz"
 
 # Installs Tmux Theme:
 
@@ -207,7 +213,7 @@ RUN git clone https://github.com/aniqfakhrul/powerview.py.git ~/Tools/powerview.
     
 # Install NeoVim plugin manager.
 
-RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+RUN sh -c 'curl --retry-all-errors --retry 5 -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # Installs Bearer for code analysis.
@@ -232,10 +238,11 @@ RUN git clone https://github.com/ticarpi/jwt_tool.git ~/Tools/jwt_tool && \
     chmod 777 ~/Tools/jwt_tool/jwt_tool.py
     
 # Install webpack unpacker
+# this tool has been abandoned and is planned to be purged, I will archive it out of respect.
 
-RUN git clone https://github.com/rarecoil/unwebpack-sourcemap.git ~/Tools/unwebpack-sourcemap && \
-    pip3 install -r ~/Tools/unwebpack-sourcemap/requirements.txt 2>/dev/null 1>/dev/null && \
-    chmod 777 ~/Tools/unwebpack-sourcemap/unwebpack_sourcemap.py
+#RUN git clone https://github.com/rarecoil/unwebpack-sourcemap.git ~/Tools/unwebpack-sourcemap && \
+#    pip3 install -r ~/Tools/unwebpack-sourcemap/requirements.txt 2>/dev/null 1>/dev/null && \
+#    chmod 777 ~/Tools/unwebpack-sourcemap/unwebpack_sourcemap.py
     
 # Install ligolo-ng (Pivoting/Tunneling Tool)
 # I've also added in the Windows versions as well.
@@ -248,9 +255,10 @@ RUN git clone https://github.com/nicocha30/ligolo-ng.git ~/Tools/ligolo-ng && \
     GOOS=windows go build -C ~/Tools/ligolo-ng/cmd/agent/ -o ligolo-agent.exe && mv ~/Tools/ligolo-ng/cmd/agent/ligolo-agent.exe ~/Tools/ligolo-ng
 
 # Installs Chisel (ligolo-ng does not have local port forwarding....somehow.)
+# Update: As of 25/2/2024, ligolo-ng has added in local port forwarding, which I will test out and remove chisel if needed.
 
-RUN curl https://i.jpillora.com/chisel! | bash && \
-    latest_release=$(curl -s "https://api.github.com/repos/jpillora/chisel/releases/latest" | grep -oP '"tag_name": "\K(.*?)(?=")') && \
+RUN curl --retry-all-errors --retry 5 https://i.jpillora.com/chisel! | bash && \
+    latest_release=$(curl --retry-all-errors --retry 5 -s "https://api.github.com/repos/jpillora/chisel/releases/latest" | grep -oP '"tag_name": "\K(.*?)(?=")') && \
     file_name="chisel_${latest_release#v}_windows_amd64.gz" && \
     download_url="https://github.com/jpillora/chisel/releases/download/$latest_release/${file_name}" && \
     wget -O "chisel.exe.gz" "${download_url}" && \
@@ -279,23 +287,23 @@ RUN wget https://github.com/itm4n/FullPowers/releases/download/v0.1/FullPowers.e
 
 # Installs GodPotato
 
-RUN latest_release=$(curl -s "https://api.github.com/repos/BeichenDream/GodPotato/releases/latest" | grep -o '"tag_name": ".*"' | cut -d'"' -f4) && \
+RUN latest_release=$(curl --retry-all-errors --retry 5 -s "https://api.github.com/repos/BeichenDream/GodPotato/releases/latest" | grep -o '"tag_name": ".*"' | cut -d'"' -f4) && \
     download_url="https://github.com/BeichenDream/GodPotato/releases/download/$latest_release/GodPotato-NET4.exe" && \
     wget -O "GodPotato.exe" "$download_url" && \
     mv GodPotato.exe ~/Payloads/PoC
     
 # Installs Ngrok (Proxy through internet to localhost)
 
-RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
+RUN curl --retry-all-errors --retry 5 -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
     echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && \
-    sudo apt update && sudo apt upgrade && sudo apt install ngrok
+    sudo apt update && sudo apt upgrade -y && sudo apt install ngrok
 
 # Installs Inveigh.exe and Inveigh (Linux). 
 # This lets you run responder on both windows (post-compromise and on this container.)
 # Please look at the README.md for instructions on how to enable multicast forwarding.
 # Inveigh.exe has been removed as it's part of the SharpCollection repo.
 
-RUN latest=$(curl -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \   
+RUN latest=$(curl --retry-all-errors --retry 5 -IL -s https://github.com/Kevin-Robertson/Inveigh/releases/latest | awk -F'/' '/location:/ { print $NF }' | tr -d '\r\n') && \   
     latest="${latest/tag/download}" && \
     version=$(echo "$latest" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.zip/\1/') && \
     download_link="https://github.com/Kevin-Robertson/Inveigh/releases/download/${latest}/Inveigh-net7.0-linux-x64-trimmed-single-${version}.tar.gz" && \ 
@@ -324,9 +332,13 @@ RUN git clone https://github.com/six2dez/reconftw ~/Tools/reconftw
 COPY Config/reconftw.cfg ${HOME}/Tools/reconftw/reconftw.cfg
 
 # Installs updated Crackmapexec (God I should've known about this sooner.....)
+# The original CME has been unmaintained/abandoned, and thus replaced with Netexec alongside it's new installations.
+# Installation will thus be archived.
 
-RUN git clone https://github.com/Porchetta-Industries/CrackMapExec.git ~/Tools/CrackMapExec && \
-    pipx install ~/Tools/CrackMapExec
+#RUN git clone https://github.com/Porchetta-Industries/CrackMapExec.git ~/Tools/CrackMapExec && \
+#    pipx install ~/Tools/CrackMapExec
+
+RUN pipx install git+https://github.com/Pennyw0rth/NetExec
 
 # Installs enum4linux-ng (I recommend using CME for RID cycling.)
 
@@ -354,7 +366,7 @@ RUN go install github.com/Charlie-belmer/nosqli@latest
 
 # Installs AWS Cli
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+RUN curl --retry-all-errors --retry 5 "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install && \
     rm awscliv2.zip && \
@@ -397,7 +409,6 @@ RUN apt-get update && apt-get install -y \
     ttf-ancient-fonts \
     impacket-scripts \
     python3-impacket \
-    python3-neovim \
     certipy-ad \
     gpp-decrypt \
     peass \
@@ -424,8 +435,14 @@ COPY Config/.* ${HOME}/
 COPY Config/init.lua ${HOME}/.config/nvim/init.lua
 COPY --chown=${USER_ALT}:${USER_ALT} Config/Vanguard_Worship_Files/* /home/${USER_ALT}/Vanguard_Worship_Alter/
 
-# Activates init.lua (NeoVim) file.
-RUN nvim --headless +PlugInstall +qall 1>/dev/null
+# Moves and Activates init.lua (NeoVim) file.
+# Turns out the require error is intended and it seems to be fine once PlugInstall runs.
+
+RUN  mkdir -p "${HOME}/.local/share" && \
+     mv nvim-linux64/* "${HOME}/.local/share/nvim" && \
+     rm -r nvim-linux64 && \
+     ~/.local/share/nvim/bin/nvim --headless +PlugInstall +qall 1>/dev/null 2>/dev/null 
+    
 
 # Sets Execute Perms on offering script.
     

@@ -19,13 +19,14 @@ vim.api.nvim_set_keymap('v', '<S-d>', '"_d', { noremap = true })
 
 
 --Plugin Initialization
+local vim = vim
 local Plug = vim.fn['plug#']
 
 vim.call('plug#begin')
 
+Plug 'nvim-lualine/lualine.nvim'
 Plug ('folke/tokyonight.nvim', { as= 'tokyonight' })
 Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'MunifTanjim/nui.nvim'

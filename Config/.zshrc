@@ -258,7 +258,7 @@ if [ -f /etc/zsh_command_not_found ]; then
 fi
 
 source ~/.cargo/env
-export PATH="${HOME}/.local/bin:/home/Thy_GoD/.local/bin:${PATH}"
+export PATH="${HOME}/.local/bin:${HOME}/.local/share/nvim/bin:/home/Thy_GoD/.local/bin:${PATH}"
 export PATH="/usr/games:${PATH}"
 #export PATH="${HOME}/Tools/Villain:${PATH}" Villain is no longer manually built, remove this is if need be.
 export GOPATH="${HOME}/.go"
