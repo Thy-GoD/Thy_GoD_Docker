@@ -8,6 +8,31 @@ Feel free to use this to make your own docker projects or whatever.
 
 (report bugs)
 
+## Images & Showcase (Yay I finally added them)
+
+Main interface + my personal Tmux theme.
+
+![Screenshot1](Screenshots/terminal_screenshot1.jpg)
+
+How the home directory looks like by default.
+<img src="Screenshots/terminal_screenshot2.jpg" width="500">
+
+This is how my Neovim configuration looks like, with NeoTree as a bonus.
+![Screenshot3](Screenshots/terminal_screenshot3.jpg)
+
+These are the current default tools I have under the Tools directory.
+I will eventually plan on adding a Tools list but some Tools may not appear in this directory.
+![Screenshot4](Screenshots/terminal_screenshot4.jpg)
+
+These are the default payloads, msfvenom is for msfvenom-generated payloads.
+![Screenshot5](Screenshots/terminal_screenshot5.jpg)
+
+The wordlist directory is empty by default by [Reconftw](https://github.com/six2dez/reconftw) adds them.
+![Screenshot6](Screenshots/terminal_screenshot6.jpg)
+
+Lastly this is an example of how the Notes directory looks like, I recommend adding subdirectories for organization.
+![Screenshot7](Screenshots/terminal_screenshot7.jpg)
+
 ## How to use:
 
 I've made it quite easy, simply run the tools.sh file, **(as root if any conflicts occur somehow.)**.
@@ -33,7 +58,7 @@ Note that this is automatically done in the tools script, but I have not tested 
 With Bloodhound's new updated push to using a Dockerized system instead, I've opted to pre-configure <br>
 a docker-compose.yml file from their directory, to work in conjunction with this container.
 
-Therefore, all you have to do is just run `docker-compose up` (`docker-compose down -v` to remove the containers.)<br>
+Therefore, all you have to do is just run `docker-compose up` (`docker-compose down -v` to remove the containers.)
 in the new `/Bloodhound` directory.
 
 Sharphound will still be available within the container itself.
@@ -44,14 +69,15 @@ Do take note that Bloodhound's web interface's port is on port 1234, so make sur
 
 ## Note: 
 
-I will occasionally make changes to the container, in order to optimize, add, edit, or fix bugs.
+I will occasionally make changes to the container in order to optimize, add, edit features or fix bugs.
 
 Please give the dockerfile and Tools.sh a read as there is alot of customization/notifications.
 
 ## TODO List:
 
 Add more features and constant bug fixes/updates to functionality. <br>
-Add images and screenshots to make people actually want to use this lmao. <br>
+Add images and screenshots to make people actually want to use this lmao. <br> (WIP)
+Add a Tools list so you guys won't have to read the dockerfile just to figure out what's installed.
 Somehow find a way to magically make IPV6 DNS Takeover Attacks work. <br>
 
 **Update on IPv6**:
@@ -68,6 +94,8 @@ run the tools script with a `autoroute` argument, like `sudo bash Tools.sh autor
 FYI, you also have to change the spoofer ip(ipv6) to your host's so that it gets forwarded to the container.
 
 My endgame is to have a docker container that is so useful to the point where I could run it on any linux distro<br>
-while maintaining all my configurations and tools for pentesting.
+while maintaining all my configurations and tools for pentesting. (It's also more of a challenge than an actual tool)
 
 -Thigh GoD
+
+P.S Here's my [medium article](https://medium.com/@Thigh_GoD/running-responder-mitm6-inside-a-docker-container-without-host-networking-3460998a724a) I wrote about it.

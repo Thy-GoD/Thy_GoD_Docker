@@ -56,12 +56,15 @@ RUN apt-get update && apt-get install -y \
     lolcat \
     golang \
     feh \
-    freerdp2-x11 \
     lua5.4\
     burpsuite \
     villain \
     sqlmap \
     faketime \
+    enum4linux-ng \
+    pidgin \
+    mimikatz \
+    remmina \
     && rm -rf /var/lib/apt/lists/*
     
 # Updates Everything (Will be done a second time)
@@ -150,7 +153,7 @@ RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
 # Payload repo was removed due to deprecation.
 # Adds POC and msfvenom payload folders
 
-RUN mkdir ~/Payloads && mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom
+RUN mkdir ~/Payloads && mkdir ~/Payloads/PoC && mkdir ~/Payloads/msfvenom && mkdir ~/Payloads/PoC/CVEs
 
 # Adds PSpy an example tool.
 # Linpeas/Winpeas has been removed as a default tool due to peass package.
@@ -190,10 +193,13 @@ RUN git clone https://github.com/wfxr/tmux-power.git ~/.tmux/themes/
 #    chmod 777 ~/Tools/Villain/Villain.py
     
 # Install git dumper
+# Build installation archived as the creator pushes updates too frequently (and breaks it).
 
-RUN git clone https://github.com/arthaud/git-dumper.git ~/Tools/git-dumper && \
-    pip3 install -r ~/Tools/git-dumper/requirements.txt 2>/dev/null 1>/dev/null && \
-    chmod 777 ~/Tools/git-dumper/git_dumper.py
+#RUN git clone https://github.com/arthaud/git-dumper.git ~/Tools/git-dumper && \
+#    pip3 install -r ~/Tools/git-dumper/requirements.txt 2>/dev/null 1>/dev/null && \
+#    chmod 777 ~/Tools/git-dumper/git_dumper.py
+
+RUN pipx install git-dumper
     
 # Installs powerview.py (Thanks to the creator for troubleshooting a problem I had w the script.)
 
@@ -285,12 +291,22 @@ RUN wget https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke
 RUN wget https://github.com/itm4n/FullPowers/releases/download/v0.1/FullPowers.exe && \
     mv FullPowers.exe ~/Payloads/PoC
 
-# Installs GodPotato
+# Installs GodPotato use with JuicyPotatoNg/SweetPotato if this one doesn't work.
+# They should both cover all the main potatos out there, I'll probs not include any specific CVE potatos.
 
 RUN latest_release=$(curl --retry-all-errors --retry 5 -s "https://api.github.com/repos/BeichenDream/GodPotato/releases/latest" | grep -o '"tag_name": ".*"' | cut -d'"' -f4) && \
     download_url="https://github.com/BeichenDream/GodPotato/releases/download/$latest_release/GodPotato-NET4.exe" && \
     wget -O "GodPotato.exe" "$download_url" && \
     mv GodPotato.exe ~/Payloads/PoC
+
+# Installs JuicyPotatoNG
+
+RUN latest_release=$(curl --retry-all-errors --retry 5 -s "https://api.github.com/repos/antonioCoco/JuicyPotatoNG/releases/latest" | grep -o '"tag_name": ".*"' | cut -d'"' -f4) && \
+    download_url="https://github.com/antonioCoco/JuicyPotatoNG/releases/download/$latest_release/JuicyPotatoNG.zip" && \
+    wget -O "JuicyPotatoNG.zip" "$download_url" && \
+    unzip JuicyPotatoNG.zip && \
+    rm JuicyPotatoNG.zip && \
+    mv JuicyPotatoNG.exe ~/Payloads/PoC
     
 # Installs Ngrok (Proxy through internet to localhost)
 
@@ -340,15 +356,17 @@ COPY Config/reconftw.cfg ${HOME}/Tools/reconftw/reconftw.cfg
 
 RUN pipx install git+https://github.com/Pennyw0rth/NetExec
 
-# Installs enum4linux-ng (I recommend using CME for RID cycling.)
+# Installs enum4linux-ng (I recommend using NetExec for RID cycling.)
+# Archived installation as it's part of debian packages.
 
-RUN git clone https://github.com/cddmp/enum4linux-ng.git ~/Tools/enum4linux-ng && \
-    pipx install ~/Tools/enum4linux-ng
+# RUN git clone https://github.com/cddmp/enum4linux-ng.git ~/Tools/enum4linux-ng && \
+#   pipx install ~/Tools/enum4linux-ng
 
 # Installs Pwncat-cs, which is a C2 tool,
 # It does have auto-privesc functionality so beware if you're using this tool for OSCP.
+# Removed as my experience with it has been kinda annoying, use Villain instead.
 
-RUN pipx install pwncat-cs
+# RUN pipx install pwncat-cs
 
 # Installs SharpCollection's compiled binaries (Certify, Rubeus etc.)
 

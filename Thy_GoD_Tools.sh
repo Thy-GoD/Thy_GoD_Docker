@@ -226,7 +226,7 @@ else
 	    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal --device /dev/net/tun:/dev/net/tun -v $SHARED_FOLDER_PATH:$HOME_VAR/Shared_Folder -v \
 	    /tmp/.X11-unix:/tmp/.X11-unix --shm-size=1g -e DISPLAY=$DISPLAY --name $CONTAINER_NAME $IMAGE_NAME zsh
     else    
-	    docker run --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 21:21 -p 22:22 -p 25:25 -p 53:53 -p 53:53/udp -p 80:80 -p 88:88 -p 110:110 -p 135:135 \
+	    docker run --sysctl net.ipv6.conf.all.disable_ipv6=0 --cap-add=NET_ADMIN -it -h Thigh-Terminal -p 21:21 -p 22:22 -p 25:25 -p 53:53 -p 53:53/udp -p 80:80 -p 88:88 -p 110:110 -p 135:135 \
 	    -p 137:137/udp -p 138:138/udp -p 139:139 -p 389:389 -p 389:389/udp -p 443:443 -p 445:445 -p 546:546 -p 546:546/udp -p 547:547 -p 547:547/udp \
 	    -p 587:587 -p 636:636 -p 1180:1180 -p 1433:1433 -p 1434:1434/udp -p 3141:3141 -p 3128:3128 -p 4443:4443 -p 4444:4444 -p 5353:5353/udp -p 5355:5355/udp \
 	    -p 5985:5985 \
