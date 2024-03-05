@@ -15,7 +15,7 @@ Main interface + my personal Tmux theme.
 ![Screenshot1](Screenshots/terminal_screenshot1.jpg)
 
 How the home directory looks like by default.
-<img src="Screenshots/terminal_screenshot2.jpg" width="500">
+![Screenshot2](Screenshots/terminal_screenshot2.jpg")
 
 This is how my Neovim configuration looks like, with NeoTree as a bonus.
 ![Screenshot3](Screenshots/terminal_screenshot3.jpg)
